@@ -23,11 +23,10 @@ class Board:
         self.checkstatus(iteration, )
         print(iteration)
 
-
     def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
         label = Label(self.frame, text=hole.beads, borderwidth=6, relief="ridge", width=width, height=height, font=1.5)
         label.grid(row=row, column=hole_counter, padx=25, pady=25)
-        label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration))
+        label.bind("<Button-1>", lambda event, iteration=hole.iteration: self.left_click(iteration))
         return label
 
     def render_holes(self, currentIndex, currentPlayer):
@@ -67,14 +66,14 @@ class Board:
                 print("\nCurrently at evalBeads after calBeads, going to call calBeads next!")
                 self.calBeads(self.nextIndex)
             else:
-                self.exportIndexfor = self.nextIndex
+                self.extractScore(self.newIndex)
         else:
             self.nextIndex -= len(self.boardArray)
 
             if self.boardArray[self.nextIndex] != 0:
                 self.calBeads(self.nextIndex)
             else:
-                self.exportIndexfor = self.nextIndex
+                self.extractScore(self.newIndex)
 
     def calBeads(self, index):
         self.move = self.boardArray[index]
@@ -216,6 +215,16 @@ class Board:
             print("hole is empty cannot choose this hole")
             return
 
-    def exportIndex(self):
-        return self.exportIndexfor
+    def extractScore(self, index):
+        self.newIndex = index + 1
+        if self.newIndex < len(self.boardArray):
+            self.exportscore += self.boardArray[self.newIndex]
+            self.boardArray[self.newIndex] = 0
+        else:
+            self.newIndex -= len(self.boardArray)
+            self.exportscore += self.boardArray[self.newIndex]
+            self.boardArray[self.newIndex] = 0
+
+    def exportScore(self):
+        return self.exportscore
 

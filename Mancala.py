@@ -1,6 +1,7 @@
 from Board import *
 from Player import *
 from random import *
+from tkinter import *
 
 eholes = True
 w2 = True
@@ -72,17 +73,17 @@ while my_board.haventWin:
                 print("Please choose a hole that is present in your row")
                 print("It is "+str(currentPlayer)+"'s turn now")
 
-    iForPlayer = my_board.exportIndex()
+    roundScore = my_board.exportScore()
 
-    print("iForPlayer is " + str(iForPlayer))
+    print("roundScore is " + str(roundScore))
 
     if currentPlayer == player1.name:
-        player1.assignScore(iForPlayer, my_board.boardArray)
+        player1.assignScore(roundScore)
         print(player1.name+"'s turn has ended!\n His score is "+str(player1.getCurrentScore()))
         currentPlayer = player2.name
         print("It is "+str(player2.name)+"'s turn next")
     elif currentPlayer == player2.name:
-        player2.assignScore(iForPlayer, my_board.boardArray)
+        player2.assignScore(roundScore)
         print(player2.name+"'s turn has ended!\n His score is "+str(player2.getCurrentScore()))
         currentPlayer = player1.name
         print("It is "+str(player1.name)+"'s turn next")
@@ -90,7 +91,7 @@ while my_board.haventWin:
     my_board.checkHaventWin(currentPlayer)
     print(my_board.boardArray)
     """if currentPlayer == 1:
-        player1.assignScore(iForPlayer, my_board.boardArray)
+        player1.assignScore(roundScore, my_board.boardArray)
     elif currentPlayer == 2:
         player1.getCurrentScore()
     else:
