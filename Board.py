@@ -1,24 +1,55 @@
+from tkinter import *
+from Hole import Hole
+
 class Board:
 
-    def __init__(self, holes, beads, p1name, p2name):
+    def __init__(self, holes, beads, p1name, p2name, frame):
         self.holes = holes
         self.beads = beads
         self.boardArray = []
         self.p1name = p1name
         self.p2name = p2name
+        self.frame = frame
         self.p1side = 0
         self.p2side = 0
         self.checkStatus = True
         self.haventWin = True
 
-        for x in range(self.holes):
-            self.boardArray.append(beads)
+    def init_holes(self):
+        for index in range(0, self.holes):
+            self.boardArray.append(Hole(self.beads, index))
 
-    def bord(self):
-        i=0
-        for x in self.boardArray:
-            print(str(x)+"-"+str(i))
-            i += 1
+    def left_click(self, iteration, cplayer):
+        self.checkstatus(iteration, )
+        print(iteration)
+
+
+    def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
+        label = Label(self.frame, text=hole.beads, borderwidth=6, relief="ridge", width=width, height=height, font=1.5)
+        label.grid(row=row, column=hole_counter, padx=25, pady=25)
+        label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration))
+        return label
+
+    def render_holes(self, currentIndex, currentPlayer):
+        hole_counter = 0
+        width = 5
+        height = 3
+
+        for hole in self.boardArray[::-1]:
+            if hole_counter < int((len(self.boardArray) / 2)):
+                label = self.create_hole(hole, hole_counter, width, height, 1, currentPlayer)
+                if hole.iteration == currentIndex:
+                    label.configure(bg="orange")
+                hole_counter += 1
+
+        hole_counter = 0
+
+        for hole in self.boardArray:
+            if hole_counter < int((len(self.boardArray) / 2)):
+                label = self.create_hole(hole, hole_counter, width, height, 2)
+                if hole.iteration == currentIndex:
+                    label.configure(bg="orange")
+                hole_counter += 1
 
     def chooseSide(self, side):
         if side == "y":
