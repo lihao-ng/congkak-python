@@ -1,6 +1,7 @@
 from tkinter import *
+from PIL import Image, ImageTk
+
 from Hole import Hole
-from Player2 import Player
 
 class Board:
 
@@ -19,6 +20,7 @@ class Board:
         self.haventWin = True
         self.indicator = 0
         self.extractscore = 0
+        self.message = "Player 1's turn!"
 
     def init_holes(self):
         for index in range(0, self.holes):
@@ -48,9 +50,22 @@ class Board:
             self.player2obj.render_player()
             self.checkStatus = False
 
+    def render_message(self, message):
+        self.message = message
+        label = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="green")
+        middle = int(len(self.boardArray) / 4)
+        label.grid(row=2, column=middle, pady=15)
+
     def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
-        label = Label(self.frame, text=hole.beads, borderwidth=6, relief="ridge", width=width, height=height, font=1.5)
-        label.grid(row=row, column=hole_counter, padx=25, pady=25)
+        if(hole.indicator == False):
+            image = Image.open("images/active-hole.png").resize((150, 150), Image.ANTIALIAS)
+        else:
+            image = Image.open("images/hole.png").resize((150, 150), Image.ANTIALIAS)
+
+        loadImage = ImageTk.PhotoImage(image)
+        label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, fg="white")
+        label.photo = loadImage
+        label.grid(row=row, column=hole_counter)
         label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration, cplayer))
         return label
 
@@ -62,17 +77,18 @@ class Board:
         for hole in self.boardArray[::-1]:
             if hole_counter < int((len(self.boardArray) / 2)):
                 label = self.create_hole(hole, hole_counter, width, height, 1, currentPlayer)
-                if hole.iteration == currentIndex:
-                    label.configure(bg="orange")
+                # if hole.iteration == currentIndex:
+                #     label.configure(bg="orange")
                 hole_counter += 1
 
         hole_counter = 0
+        self.render_message(self.message)
 
         for hole in self.boardArray:
             if hole_counter < int((len(self.boardArray) / 2)):
-                label = self.create_hole(hole, hole_counter, width, height, 2, currentPlayer)
-                if hole.iteration == currentIndex:
-                    label.configure(bg="orange")
+                label = self.create_hole(hole, hole_counter, width, height, 3, currentPlayer)
+                # if hole.iteration == currentIndex:
+                #     label.configure(bg="orange")
                 hole_counter += 1
 
     def chooseSide(self, side):
@@ -113,13 +129,14 @@ class Board:
             else:
                 self.newIndex -= len(self.boardArray)
                 self.boardArray[self.newIndex].beads += 1
-                self.z += 1
+            self.z += 1
         index = self.newIndex
         self.evalBeads(index)
 
     def checkstatus(self, index, pname):
         if pname == self.p1name:
             if self.p1side == "1st":
+                self.changeP1Indicator()
                 if index >= 0 and index < int(len(self.boardArray) / 2):
                     self.check1stRow()
                     if self.boardClear == False:
@@ -148,6 +165,7 @@ class Board:
                 else:
                     return
             else:
+                self.changeP2Indicator()
                 if index >= int(len(self.boardArray) / 2) and index < len(self.boardArray):
                     self.check2ndRow()
                     if self.boardClear == False:
@@ -210,4 +228,18 @@ class Board:
             self.extractscore = self.boardArray[self.newIndex].beads
             self.boardArray[self.newIndex].beads = 0
 
+    def changeP1Indicator(self):
+        for i in range(0, int(len(self.boardArray))):
+            if i < int(len(self.boardArray) / 2):
+                if self.boardArray[i].beads != 0:
+                    self.boardArray[i].indicator = True
+            else:
+                self.boardArray[i].indicator = False
 
+    def changeP2Indicator(self):
+        for i in range(int(len(self.boardArray))):
+            if i >= int(len(self.boardArray) / 2):
+                if self.boardArray[i].beads != 0:
+                    self.boardArray[i].indicator = True
+            else:
+                self.boardArray[i].indicator = False
