@@ -2,10 +2,11 @@ from tkinter import *
 from PIL import Image, ImageTk
 
 from Hole import Hole
+from GameOver import GameOver
 
 class Board:
 
-    def __init__(self, holes, beads, player1, player2, frame):
+    def __init__(self, holes, beads, player1, player2, frame, controller):
         self.holes = holes
         self.beads = beads
         self.boardArray = []
@@ -21,10 +22,14 @@ class Board:
         self.indicator = 0
         self.extractscore = 0
         self.message = "Player 1's turn!"
+        self.controller = controller
 
     def init_holes(self):
         for index in range(0, self.holes):
-            self.boardArray.append(Hole(self.beads, index))
+            indicator = False
+            if index < self.holes / 2:
+                indicator = True
+            self.boardArray.append(Hole(self.beads, index, indicator))
 
     def left_click(self, iteration, cplayer):
         self.checkstatus(iteration, cplayer)
@@ -34,16 +39,21 @@ class Board:
         else:
             if cplayer == self.p1name:
                 cplayer = self.p2name
+                self.render_message("Player 2's Turn!")
                 self.player1obj.assignScore(self.extractscore)
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player1obj.assignRemaining(self.boardArray)
+                    self.controller.show_frame(GameOver)
+
             elif cplayer == self.p2name:
                 cplayer = self.p1name
+                self.render_message("Player 1's Turn!")
                 self.player2obj.assignScore(self.extractscore)
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player2obj.assignRemaining(self.boardArray)
+                    self.controller.show_frame(GameOver)
 
             self.render_holes(self.indicator, cplayer)
             self.player1obj.render_player()
@@ -52,18 +62,18 @@ class Board:
 
     def render_message(self, message):
         self.message = message
-        label = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="green")
+        label = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
         middle = int(len(self.boardArray) / 4)
         label.grid(row=2, column=middle, pady=15)
 
     def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
-        if(hole.indicator == False):
-            image = Image.open("images/active-hole.png").resize((150, 150), Image.ANTIALIAS)
+        if hole.indicator == True and hole.beads != 0:
+            image = Image.open("images/active-hole.png").resize((132, 132), Image.ANTIALIAS)
         else:
-            image = Image.open("images/hole.png").resize((150, 150), Image.ANTIALIAS)
+            image = Image.open("images/hole.png").resize((132, 132), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
-        label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, fg="white")
+        label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#866538", fg="white")
         label.photo = loadImage
         label.grid(row=row, column=hole_counter)
         label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration, cplayer))
@@ -77,8 +87,6 @@ class Board:
         for hole in self.boardArray[::-1]:
             if hole_counter < int((len(self.boardArray) / 2)):
                 label = self.create_hole(hole, hole_counter, width, height, 1, currentPlayer)
-                # if hole.iteration == currentIndex:
-                #     label.configure(bg="orange")
                 hole_counter += 1
 
         hole_counter = 0
@@ -87,8 +95,6 @@ class Board:
         for hole in self.boardArray:
             if hole_counter < int((len(self.boardArray) / 2)):
                 label = self.create_hole(hole, hole_counter, width, height, 3, currentPlayer)
-                # if hole.iteration == currentIndex:
-                #     label.configure(bg="orange")
                 hole_counter += 1
 
     def chooseSide(self, side):
@@ -135,61 +141,35 @@ class Board:
 
     def checkstatus(self, index, pname):
         if pname == self.p1name:
-            if self.p1side == "1st":
-                self.changeP1Indicator()
-                if index >= 0 and index < int(len(self.boardArray) / 2):
-                    self.check1stRow()
-                    if self.boardClear == False:
-                        self.checkAmt(index)
-                    else:
-                        return
+            self.changeP2Indicator()
+            if index >= 0 and index < int(len(self.boardArray) / 2):
+                self.check1stRow()
+                if self.boardClear == False:
+                    self.checkAmt(index)
                 else:
                     return
             else:
-                if index >= int(len(self.boardArray) / 2) and index < len(self.boardArray):
-                    self.check2ndRow()
-                    if self.boardClear == False:
-                        self.checkAmt(index)
-                    else:
-                        return
-                else:
-                    return
+                return
         else:
-            if self.p2side == "1st":
-                if index >= 0 and index < int(len(self.boardArray) / 2):
-                    self.check1stRow()
-                    if self.boardClear == False:
-                        self.checkAmt(index)
-                    else:
-                        return
+            self.changeP1Indicator()
+            if index >= int(len(self.boardArray) / 2) and index < len(self.boardArray):
+                self.check2ndRow()
+                if self.boardClear == False:
+                    self.checkAmt(index)
                 else:
                     return
             else:
-                self.changeP2Indicator()
-                if index >= int(len(self.boardArray) / 2) and index < len(self.boardArray):
-                    self.check2ndRow()
-                    if self.boardClear == False:
-                        self.checkAmt(index)
-                    else:
-                        return
-                else:
-                    return
+                return
 
     def checkHaventWin(self, pname):
         if pname == self.p1name:
-            if self.p1side == "1st":
-                self.check1stRow()
-                if self.boardClear: return
-            else:
-                self.check2ndRow()
-                if self.boardClear: return
+            self.check1stRow()
+            if self.boardClear:
+                return
         else:
-            if self.p2side == "1st":
-                self.check1stRow()
-                if self.boardClear: return
-            else:
-                self.check2ndRow()
-                if self.boardClear: return
+            self.check2ndRow()
+            if self.boardClear:
+                return
 
     def check1stRow(self):
         for i in range(0, int(len(self.boardArray) / 2)):
@@ -229,17 +209,15 @@ class Board:
             self.boardArray[self.newIndex].beads = 0
 
     def changeP1Indicator(self):
-        for i in range(0, int(len(self.boardArray))):
-            if i < int(len(self.boardArray) / 2):
-                if self.boardArray[i].beads != 0:
-                    self.boardArray[i].indicator = True
+        for i in range(0, self.holes):
+            if i < self.holes / 2:
+                self.boardArray[i].indicator = True
             else:
                 self.boardArray[i].indicator = False
 
     def changeP2Indicator(self):
-        for i in range(int(len(self.boardArray))):
-            if i >= int(len(self.boardArray) / 2):
-                if self.boardArray[i].beads != 0:
-                    self.boardArray[i].indicator = True
+        for i in range(0, self.holes):
+            if i >= self.holes / 2:
+                self.boardArray[i].indicator = True
             else:
                 self.boardArray[i].indicator = False
