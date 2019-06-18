@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import font
-from Game2 import Game2
-
+from Game import Game
+from GameOver import GameOver
 
 class Main(Tk):
     def __init__(self, *args, **kwargs):
@@ -15,7 +15,7 @@ class Main(Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, Game2):
+        for F in (StartPage, Game, GameOver):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky=NSEW)
@@ -34,7 +34,7 @@ class StartPage(Frame):
         label = Label(self, text="This is the start page", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
-        button = Button(self, text="Go to Game Two", command=lambda: controller.show_frame(Game2))
+        button = Button(self, text="Go to Game Two", command=lambda: controller.show_frame(Game))
         button.pack()
 
 
