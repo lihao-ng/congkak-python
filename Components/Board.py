@@ -1,8 +1,8 @@
 from tkinter import *
 from PIL import Image, ImageTk
-from time import time, sleep
+import time
 from random import *
-
+import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
 
@@ -33,6 +33,9 @@ class Board:
                 indicator = True
             self.boardArray.append(Hole(self.beads, index, indicator))
 
+        self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
+        self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
+
     def left_click(self, iteration, cplayer):
         self.checkstatus(iteration, cplayer)
 
@@ -46,7 +49,7 @@ class Board:
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player1obj.assignRemaining(self.boardArray)
-                    self.controller.show_frame(GameOver)
+                    self.controller.show_frame(GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
 
                 self.render_holes(self.indicator, cplayer)
                 self.player1obj.render_player()
@@ -55,44 +58,45 @@ class Board:
 
                 if self.p2name == "CPU":
                     self.render_message("CPU's Turn!")
-                    # time.sleep(2)
+                    globalValues.screen.update()
+                    time.sleep(1)
                     holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
                     self.checkstatus(holeChosen, self.p2name)
                     cplayer = self.p1name
-                    self.player2obj.assignScore(self.extractscore)
-                    self.checkHaventWin(cplayer)
-                    if self.haventWin == False:
-                        self.player2obj.assignRemaining(self.boardArray)
-                        self.controller.show_frame(GameOver)
+                    self.check_condition(cplayer)
                     self.render_message("Player 1's Turn!")
 
             elif cplayer == self.p2name:
                 cplayer = self.p1name
                 self.render_message("Player 1's Turn!")
-                self.player2obj.assignScore(self.extractscore)
-                self.checkHaventWin(cplayer)
-                if self.haventWin == False:
-                    self.player2obj.assignRemaining(self.boardArray)
-                    self.controller.show_frame(GameOver)
+                self.check_condition(cplayer)
 
             self.render_holes(self.indicator, cplayer)
             self.player1obj.render_player()
             self.player2obj.render_player()
             self.checkStatus = False
 
+    def check_condition(self, cplayer):
+        self.player2obj.assignScore(self.extractscore)
+        self.checkHaventWin(cplayer)
+
+        if self.haventWin == False:
+            self.player2obj.assignRemaining(self.boardArray)
+            self.controller.show_frame(GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+
     def render_message(self, message):
         self.message = message
-        label = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
-        label.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
+        self.playerMessage.configure(text=self.message)
 
-    def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
+    def create_hole(self, hole, hole_counter, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
             image = Image.open("images/active-hole.png").resize((135, 135), Image.ANTIALIAS)
         else:
             image = Image.open("images/hole.png").resize((135, 135), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
-        label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#866538", fg="white")
+        label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#b2854b", fg="white")
+        label.config(font=("Courier", 30))
         label.photo = loadImage
         label.grid(row=row, column=hole_counter)
         label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration, cplayer))
@@ -100,12 +104,10 @@ class Board:
 
     def render_holes(self, currentIndex, currentPlayer):
         hole_counter = 0
-        width = 5
-        height = 3
 
         for hole in self.boardArray[::-1]:
             if hole_counter < int((len(self.boardArray) / 2)):
-                label = self.create_hole(hole, hole_counter, width, height, 1, currentPlayer)
+                label = self.create_hole(hole, hole_counter, 1, currentPlayer)
                 hole_counter += 1
 
         hole_counter = 0
@@ -113,7 +115,7 @@ class Board:
 
         for hole in self.boardArray:
             if hole_counter < int((len(self.boardArray) / 2)):
-                label = self.create_hole(hole, hole_counter, width, height, 3, currentPlayer)
+                label = self.create_hole(hole, hole_counter, 3, currentPlayer)
                 hole_counter += 1
 
     def evalBeads(self, index):
@@ -138,7 +140,6 @@ class Board:
         self.move = self.boardArray[index].beads
         self.boardArray[index].beads = 0
         self.newIndex = index
-        # self.z = 1
 
         for i in range(self.move):
             self.newIndex += 1

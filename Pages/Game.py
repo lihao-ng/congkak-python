@@ -7,13 +7,14 @@ class Game(Frame):
     def __init__(self, parent, controller, **kwargs):
         Frame.__init__(self, parent)
         self.controller = controller
+        self.configure(bg="#ffffe0")
 
         self.setValues(**kwargs)
 
         game_frame = Frame(self)
         board_frame = Frame(game_frame, bg="#4f3d21")
-        player1_frame = Frame(game_frame)
-        player2_frame = Frame(game_frame)
+        player1_frame = Frame(game_frame, bg="#ffffe0")
+        player2_frame = Frame(game_frame, bg="#ffffe0")
 
         game_frame.pack(side=TOP, expand=YES)
         player1_frame.grid(row=0, column=1, sticky=NSEW)
@@ -45,7 +46,6 @@ class Game(Frame):
         else:
             self.beads = 4
 
-        print(haveCPU)
         if haveCPU:
             if haveCPU == "CPU":
                 self.secondPlayer = "CPU"
