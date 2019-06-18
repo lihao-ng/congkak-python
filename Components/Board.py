@@ -1,8 +1,8 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
-from Hole import Hole
-from GameOver import GameOver
+from Components.Hole import Hole
+from Pages.GameOver import GameOver
 
 class Board:
 
@@ -68,9 +68,9 @@ class Board:
 
     def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
-            image = Image.open("images/active-hole.png").resize((132, 132), Image.ANTIALIAS)
+            image = Image.open("images/active-hole.png").resize((135, 135), Image.ANTIALIAS)
         else:
-            image = Image.open("images/hole.png").resize((132, 132), Image.ANTIALIAS)
+            image = Image.open("images/hole.png").resize((135, 135), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
         label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#866538", fg="white")
