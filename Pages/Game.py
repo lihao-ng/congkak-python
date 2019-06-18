@@ -45,6 +45,7 @@ class Game(Frame):
         else:
             self.beads = 4
 
+        print(haveCPU)
         if haveCPU:
             if haveCPU == "CPU":
                 self.secondPlayer = "CPU"

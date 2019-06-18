@@ -57,14 +57,16 @@ class SelectMode(Frame):
 
 
         def checkUserInput():
-            if(self.gameMode == ""):
+            if self.gameMode == "":
                 messagebox.showerror("Error", "Please select Mode")
-            elif(self.opponentType == ""):
+            elif self.opponentType == "":
                 messagebox.showerror("Error", "Please select Opponent")
-            elif (int(self.numOfHoles.get()) % 2 != 0):
-                messagebox.showerror("Error", "Number of Holes have to be Even Number")
+            elif int(self.numOfHoles.get()) % 2 != 0 or int(self.numOfHoles.get()) == 0:
+                messagebox.showerror("Error", "Number of Holes have to be Even Number ")
+            elif int(self.numOfBeads.get()) == 0:
+                messagebox.showerror("Error", "Number of Beads cannot be 0")
             else:
-                self.controller.show_frame(Game, holes=self.numOfHoles.get(), beads=self.numOfBeads.get())
+                self.controller.show_frame(Game, holes=self.numOfHoles.get(), beads=self.numOfBeads.get(), haveCPU=self.opponentType)
 
 
         def selectMode(mode):

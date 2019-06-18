@@ -1,5 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk
+from time import time, sleep
+from random import *
 
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
@@ -46,6 +48,24 @@ class Board:
                     self.player1obj.assignRemaining(self.boardArray)
                     self.controller.show_frame(GameOver)
 
+                self.render_holes(self.indicator, cplayer)
+                self.player1obj.render_player()
+                self.player2obj.render_player()
+                self.checkStatus = False
+
+                if self.p2name == "CPU":
+                    self.render_message("CPU's Turn!")
+                    # time.sleep(2)
+                    holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
+                    self.checkstatus(holeChosen, self.p2name)
+                    cplayer = self.p1name
+                    self.player2obj.assignScore(self.extractscore)
+                    self.checkHaventWin(cplayer)
+                    if self.haventWin == False:
+                        self.player2obj.assignRemaining(self.boardArray)
+                        self.controller.show_frame(GameOver)
+                    self.render_message("Player 1's Turn!")
+
             elif cplayer == self.p2name:
                 cplayer = self.p1name
                 self.render_message("Player 1's Turn!")
@@ -63,8 +83,7 @@ class Board:
     def render_message(self, message):
         self.message = message
         label = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
-        middle = int(len(self.boardArray) / 4)
-        label.grid(row=2, column=middle, pady=15)
+        label.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
 
     def create_hole(self, hole, hole_counter, width, height, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
@@ -97,14 +116,6 @@ class Board:
                 label = self.create_hole(hole, hole_counter, width, height, 3, currentPlayer)
                 hole_counter += 1
 
-    def chooseSide(self, side):
-        if side == "y":
-            self.p1side = "1st"
-            self.p2side = "2nd"
-        elif side == "n":
-            self.p2side = "1st"
-            self.p1side = "2nd"
-
     def evalBeads(self, index):
         self.nextIndex = index + 1
 
@@ -126,18 +137,21 @@ class Board:
     def calBeads(self, index):
         self.move = self.boardArray[index].beads
         self.boardArray[index].beads = 0
-        self.z = 1
+        self.newIndex = index
+        # self.z = 1
 
         for i in range(self.move):
-            self.newIndex = index + self.z
+            self.newIndex += 1
             if self.newIndex < len(self.boardArray):
-                self.boardArray[self.newIndex].beads += 1
+                if self.move > 0:
+                    self.boardArray[self.newIndex].beads += 1
+                    self.move -= 1
             else:
-                self.newIndex -= len(self.boardArray)
-                self.boardArray[self.newIndex].beads += 1
-            self.z += 1
-        index = self.newIndex
-        self.evalBeads(index)
+                if self.move > 0:
+                    self.newIndex = 0
+                    self.boardArray[self.newIndex].beads += 1
+                    self.move -= 1
+        self.evalBeads(self.newIndex)
 
     def checkstatus(self, index, pname):
         if pname == self.p1name:
