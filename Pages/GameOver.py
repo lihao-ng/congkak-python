@@ -46,5 +46,12 @@ class GameOver(Frame):
         label.photo = loadImage
         label.grid(row=2, column=2)
 
+        submitBtn = Button(resultFrame, width=25, height=2, text='HOME', bd=5, bg="#ffffe0", command=lambda: self.switchToMenu())
+        submitBtn.config(font=("Courier", 16, "bold"))
+        submitBtn.grid(row=8, column=1, pady=40)
+
         resultFrame.pack(side=TOP, expand=YES)
         gameOverFrame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
+
+    def switchToMenu(self):
+        self.controller.show_frame("MainPage")

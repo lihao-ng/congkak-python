@@ -1,7 +1,7 @@
 from tkinter import *
 from Components.Board import Board
 from Components.Player import Player
-
+import globalValues
 class Game(Frame):
 
     def __init__(self, parent, controller, **kwargs):
@@ -29,7 +29,6 @@ class Game(Frame):
         player2.render_player()
         board.init_holes()
         board.render_holes(0, player1.name)
-
 
     def setValues(self, **kwargs):
         holes = kwargs.get("holes")

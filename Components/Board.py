@@ -25,6 +25,7 @@ class Board:
         self.extractscore = 0
         self.message = "Player 1's turn!"
         self.controller = controller
+        self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
 
     def init_holes(self):
         for index in range(0, self.holes):
@@ -33,7 +34,6 @@ class Board:
                 indicator = True
             self.boardArray.append(Hole(self.beads, index, indicator))
 
-        self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
         self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
 
     def left_click(self, iteration, cplayer):
@@ -49,14 +49,14 @@ class Board:
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player1obj.assignRemaining(self.boardArray)
-                    self.controller.show_frame(GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
 
                 self.render_holes(self.indicator, cplayer)
                 self.player1obj.render_player()
                 self.player2obj.render_player()
                 self.checkStatus = False
 
-                if self.p2name == "CPU":
+                if self.p2name == "CPU" and self.haventWin == True:
                     self.render_message("CPU's Turn!")
                     globalValues.screen.update()
                     time.sleep(1)
@@ -82,7 +82,7 @@ class Board:
 
         if self.haventWin == False:
             self.player2obj.assignRemaining(self.boardArray)
-            self.controller.show_frame(GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
 
     def render_message(self, message):
         self.message = message
