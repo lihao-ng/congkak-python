@@ -5,6 +5,7 @@ from random import *
 import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
+from tkinter import messagebox
 
 class Board:
 
@@ -40,6 +41,8 @@ class Board:
         self.checkstatus(iteration, cplayer)
 
         if self.checkStatus == False:
+            if cplayer != "CPU":
+                messagebox.showerror("Error", "Please choose a hole with values!")
             return
         else:
             if cplayer == self.p1name:
@@ -49,7 +52,7 @@ class Board:
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player1obj.assignRemaining(self.boardArray)
-                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
 
                 self.render_holes(self.indicator, cplayer)
                 self.player1obj.render_player()
@@ -60,7 +63,8 @@ class Board:
                     self.render_message("CPU's Turn!")
                     globalValues.screen.update()
                     time.sleep(1)
-                    holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
+
+                    holeChosen = self.get_cpu_hole()
                     self.checkstatus(holeChosen, self.p2name)
                     cplayer = self.p1name
                     self.check_condition(cplayer)
@@ -76,13 +80,20 @@ class Board:
             self.player2obj.render_player()
             self.checkStatus = False
 
+    def get_cpu_hole(self):
+        while True:
+            holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
+            if holeChosen < len(self.boardArray):
+                if self.boardArray[holeChosen].beads != 0:
+                    return holeChosen
+
     def check_condition(self, cplayer):
         self.player2obj.assignScore(self.extractscore)
         self.checkHaventWin(cplayer)
 
         if self.haventWin == False:
             self.player2obj.assignRemaining(self.boardArray)
-            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
 
     def render_message(self, message):
         self.message = message
@@ -90,9 +101,9 @@ class Board:
 
     def create_hole(self, hole, hole_counter, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
-            image = Image.open("images/active-hole2.png").resize((135, 135), Image.ANTIALIAS)
+            image = Image.open("images/active-hole2.png").resize((100, 100), Image.ANTIALIAS)
         else:
-            image = Image.open("images/hole2.png").resize((135, 135), Image.ANTIALIAS)
+            image = Image.open("images/hole2.png").resize((100, 100), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
         label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#b2854b", fg="white")

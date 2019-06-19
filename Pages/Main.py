@@ -39,7 +39,6 @@ class Main(Tk):
             frame = className(self.container, self, **kwargs)
             frame.grid(row=0, column=0, sticky=NSEW)
         else:
-            print(page_name)
             frame = self.frames[page_name]
         frame.tkraise()
 
@@ -59,7 +58,7 @@ class MainPage(Frame):
         label.pack(pady=50)
 
         mainMenuBtn = Button(menuFrame, width=25, height=2, text='START GAME', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode", className=SelectMode))
-        mainMenuBtn.config(font=("Courier", 16))
+        mainMenuBtn.config(font=("Courier", 16, "bold"))
         mainMenuBtn.pack(pady=10)
         menuFrame.pack(side=TOP, expand=YES)
 
