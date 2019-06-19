@@ -5,7 +5,7 @@ from Pages.Game import Game
 
 class SelectMode(Frame):
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, **kwargs):
         Frame.__init__(self, parent)
         self.controller = controller
 

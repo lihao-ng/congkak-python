@@ -25,24 +25,28 @@ class GameOver(Frame):
         resultFrame = Frame(gameOverFrame, bg="#b2854b")
 
         label = Label(resultFrame, text="Game Over!", compound=CENTER, font=2.5, bg=self.background, fg="white")
+        label.config(font=("Courier", 30))
         label.grid(row=0, columnspan=12, pady=15)
 
         label = Label(resultFrame, text="Player 1 Score", compound=CENTER, font=2.5, bg=self.background, fg="white")
+        label.config(font=("Courier", 20))
         label.grid(row=1, column=0)
 
         label = Label(resultFrame, text="Results", compound=CENTER, font=2.5, bg=self.background, fg="white")
+        label.config(font=("Courier", 25))
         label.grid(row=1, column=1)
 
         label = Label(resultFrame, image=loadImage, text=self.player1Score, compound=CENTER, font=2.5, bg=self.background, fg="white")
-        label.config(font=("Courier", 44))
+        label.config(font=("Courier", 30))
         label.photo = loadImage
         label.grid(row=2, column=0)
 
         label = Label(resultFrame, text=self.player2Name, compound=CENTER, font=2.5, bg=self.background, fg="white")
+        label.config(font=("Courier", 20))
         label.grid(row=1, column=2)
 
         label = Label(resultFrame, image=loadImage, text=self.player2Score, compound=CENTER, font=2.5, bg=self.background, fg="white")
-        label.config(font=("Courier", 44))
+        label.config(font=("Courier", 30))
         label.photo = loadImage
         label.grid(row=2, column=2)
 

@@ -19,17 +19,16 @@ class Main(Tk):
         self.state('zoomed')
 
         self.pages = (MainPage, SelectMode)
-        self.container = Frame(self, width=1200, height=800)
+        self.container = Frame(self)
         self.container.pack(side="top", fill=BOTH, expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in self.pages:
-            page_name = F.__name__
-            frame = F(self.container, self)
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky=NSEW)
+        page_name = MainPage.__name__
+        frame = MainPage(self.container, self)
+        self.frames[page_name] = frame
+        frame.grid(row=0, column=0, sticky=NSEW)
 
         self.show_frame("MainPage")
 
@@ -59,7 +58,7 @@ class MainPage(Frame):
         label.image = img
         label.pack(pady=50)
 
-        mainMenuBtn = Button(menuFrame, width=25, height=2, text='START GAME', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode"))
+        mainMenuBtn = Button(menuFrame, width=25, height=2, text='START GAME', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode", className=SelectMode))
         mainMenuBtn.config(font=("Courier", 16))
         mainMenuBtn.pack(pady=10)
         menuFrame.pack(side=TOP, expand=YES)
