@@ -42,7 +42,7 @@ class Board:
 
         if self.checkStatus == False:
             if cplayer != "CPU":
-                messagebox.showerror("Error", "Please choose a hole with values!")
+                messagebox.showerror("Error", "Please choose a hole with values or from your side!")
             return
         else:
             if cplayer == self.p1name:
