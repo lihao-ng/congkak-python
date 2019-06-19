@@ -10,9 +10,12 @@ class Player:
         self.frame = frame
 
         if(self.name == "Player_1"):
-            image = Image.open("images/edge-left.png").resize((200, 341), Image.ANTIALIAS)
+            image = Image.open("images/player1-left.png").resize((220, 271), Image.ANTIALIAS)
+        elif(self.name == "Player_2"):
+            image = Image.open("images/player2-right.png").resize((220, 271), Image.ANTIALIAS)
         else:
-            image = Image.open("images/edge-right.png").resize((200, 341), Image.ANTIALIAS)
+            image = Image.open("images/cpu-right.png").resize((240, 271), Image.ANTIALIAS)
+
         loadImage = ImageTk.PhotoImage(image)
 
         self.renderScore = Label(self.frame, image=loadImage, text=self.currentScore, compound=CENTER, font=3, bd=-2, fg="white", bg="#ffffe0", pady=0, padx=0)

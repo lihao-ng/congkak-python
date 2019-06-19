@@ -11,7 +11,7 @@ class GameOver(Frame):
         self.player1Score = kwargs.get("player1Score")
         self.player2Score = kwargs.get("player2Score")
         self.player2Name = kwargs.get("player2Name")
-
+        print(self.player2Name)
         if self.player2Name == "CPU":
             self.player2Name = "CPU Score"
         else:
