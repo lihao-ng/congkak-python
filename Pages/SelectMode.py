@@ -5,66 +5,88 @@ from Pages.Game import Game
 
 class SelectMode(Frame):
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, **kwargs):
         Frame.__init__(self, parent)
         self.controller = controller
-        self.configure(bg="white")
-        self.btnDefaultColor = "orange"
-        self.btnSelectedColor = "white"
+
+        self.background = "#b2854b"
+        self.color = "white"
+        self.btnDefaultColor = "#ffffe0"
+        self.btnSelectedColor = "#4f3d21"
+
+        self.configure(bg=self.btnDefaultColor)
         self.gameMode = ""
         self.opponentType = ""
         self.holesDefault = IntVar()
         self.beadsDefault = IntVar()
 
+        outerFrame = Frame(self, bg=self.background)
+        selectModeFrame = Frame(outerFrame, bg=self.background)
 
-        label1 = Label(self, text="Select Mode:", font=controller.title_font, bg="white")
+        label1 = Label(selectModeFrame, text="Select Mode:", font=controller.title_font, bg=self.background, fg=self.color)
+        label1.config(font=("Courier", 18, "bold"))
         label1.grid(row=0,padx=20,pady=20)
 
-        normalModeBtn= Button(self, width=25, height=2, text='NORMAL', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('normal'))
-        normalModeBtn.grid(row=1, column=0)
+        normalModeBtn= Button(selectModeFrame, width=25, height=2, text='NORMAL', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('normal'))
+        normalModeBtn.config(font=("Courier", 14, "bold"))
+        normalModeBtn.grid(row=1, column=0, pady=20)
 
-        intermediateModeBtn = Button(self, width=25, height=2, text='INTERMEDIATE', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('intermediate'))
-        intermediateModeBtn.grid(row=1, column=1, padx=40)
+        intermediateModeBtn = Button(selectModeFrame, width=25, height=2, text='INTERMEDIATE', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('intermediate'))
+        intermediateModeBtn.config(font=("Courier", 14, "bold"))
+        intermediateModeBtn.grid(row=1, column=1, padx=20)
 
-        advancedModeBtn = Button(self, width=25, height=2, text='ADVANCED', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('hard'))
-        advancedModeBtn.grid(row=1, column=2,padx=40)
+        advancedModeBtn = Button(selectModeFrame, width=25, height=2, text='ADVANCED', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('hard'))
+        advancedModeBtn.config(font=("Courier", 14, "bold"))
+        advancedModeBtn.grid(row=1, column=2,padx=20)
 
-        label1 = Label(self, text="Select Opponent:", font=controller.title_font, bg="white")
+        label1 = Label(selectModeFrame, text="Select Opponent:", font=controller.title_font, bg=self.background, fg=self.color)
+        label1.config(font=("Courier", 18, "bold"))
         label1.grid(row=2,padx=20,pady=20)
 
-        player2Btn= Button(self, width=25, height=2, text='PLAYER 2', bd=5, bg=self.btnDefaultColor, command=lambda: selectOpponent('Player_2'))
-        player2Btn.grid(row=3, column=0)
+        player2Btn= Button(selectModeFrame, width=25, height=2, text='PLAYER 2', bd=5, bg=self.btnDefaultColor, command=lambda: selectOpponent('Player_2'))
+        player2Btn.config(font=("Courier", 14, "bold"))
+        player2Btn.grid(row=3, column=0, padx=20)
 
-        CPUbtn = Button(self, width=25, height=2, text='CPU', bd=5, bg=self.btnDefaultColor, command=lambda: selectOpponent('CPU'))
-        CPUbtn.grid(row=3, column=1, padx=40)
+        CPUbtn = Button(selectModeFrame, width=25, height=2, text='CPU', bd=5, bg=self.btnDefaultColor, command=lambda: selectOpponent('CPU'))
+        CPUbtn.config(font=("Courier", 14, "bold"))
+        CPUbtn.grid(row=3, column=1, padx=20)
 
-        labelBeads = Label(self, text="Number Of Bead:", font=controller.title_font,  bg="white")
+        labelBeads = Label(selectModeFrame, text="Number Of Beads:", font=controller.title_font, bg=self.background, fg=self.color)
+        labelBeads.config(font=("Courier", 18, "bold"))
         labelBeads.grid(row=4, column=0, pady=20)
 
-        self.numOfBeads = Entry(self, width=25, bd=5, bg=self.btnDefaultColor, textvariable= self.beadsDefault)
+        self.numOfBeads = Entry(selectModeFrame, width=25, bd=5, bg=self.btnDefaultColor, textvariable= self.beadsDefault)
+        self.numOfBeads.config(font=("Courier", 14, "bold"))
         self.beadsDefault.set(4)
         self.numOfBeads.grid(row=5, column=0)
 
-        labelHoles = Label(self, text="Number Of Holes:", font=controller.title_font,  bg="white")
+        labelHoles = Label(selectModeFrame, text="Number Of Holes:", font=controller.title_font, bg=self.background, fg=self.color)
+        labelHoles.config(font=("Courier", 18, "bold"))
         labelHoles.grid(row=4, column=1, pady=20)
 
-        self.numOfHoles = Entry(self, width=25, bd=5, bg=self.btnDefaultColor, textvariable= self.holesDefault)
+        self.numOfHoles = Entry(selectModeFrame, width=25, bd=5, bg=self.btnDefaultColor, textvariable= self.holesDefault)
+        self.numOfHoles.config(font=("Courier", 14, "bold"))
         self.holesDefault.set(14)
         self.numOfHoles.grid(row=5, column=1)
 
-        submitBtn = Button(self, width=25, height=2, text='START GAME', bd=5, bg="red", command=lambda: checkUserInput())
+        submitBtn = Button(selectModeFrame, width=25, height=2, text='START GAME', bd=5, bg=self.btnDefaultColor, command=lambda: checkUserInput())
+        submitBtn.config(font=("Courier", 16, "bold"))
         submitBtn.grid(row=8, column=1, pady=40)
 
+        selectModeFrame.pack(side=TOP, expand=YES)
+        outerFrame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
 
         def checkUserInput():
-            if(self.gameMode == ""):
+            if self.gameMode == "":
                 messagebox.showerror("Error", "Please select Mode")
-            elif(self.opponentType == ""):
+            elif self.opponentType == "":
                 messagebox.showerror("Error", "Please select Opponent")
-            elif (int(self.numOfHoles.get()) % 2 != 0):
-                messagebox.showerror("Error", "Number of Holes have to be Even Number")
+            elif int(self.numOfHoles.get()) % 2 != 0 or int(self.numOfHoles.get()) == 0:
+                messagebox.showerror("Error", "Number of Holes have to be Even Number ")
+            elif int(self.numOfBeads.get()) == 0:
+                messagebox.showerror("Error", "Number of Beads cannot be 0")
             else:
-                self.controller.show_frame(Game, holes=self.numOfHoles.get(), beads=self.numOfBeads.get())
+                self.controller.show_frame("Game", className=Game, holes=self.numOfHoles.get(), beads=self.numOfBeads.get(), haveCPU=self.opponentType)
 
 
         def selectMode(mode):
