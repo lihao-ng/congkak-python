@@ -5,6 +5,7 @@ from random import *
 import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
+from tkinter import messagebox
 
 class Board:
 
@@ -40,6 +41,8 @@ class Board:
         self.checkstatus(iteration, cplayer)
 
         if self.checkStatus == False:
+            if cplayer != "CPU":
+                messagebox.showerror("Error", "Please choose a hole with values!")
             return
         else:
             if cplayer == self.p1name:

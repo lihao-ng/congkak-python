@@ -1,7 +1,7 @@
 from tkinter import *
 from Components.Board import Board
 from Components.Player import Player
-import globalValues
+
 class Game(Frame):
 
     def __init__(self, parent, controller, **kwargs):
