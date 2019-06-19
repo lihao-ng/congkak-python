@@ -60,6 +60,11 @@ class MainPage(Frame):
         mainMenuBtn = Button(menuFrame, width=25, height=2, text='START GAME', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode", className=SelectMode))
         mainMenuBtn.config(font=("Courier", 16, "bold"))
         mainMenuBtn.pack(pady=10)
+
+        AIBtn = Button(menuFrame, width=25, height=2, text='TEST AI', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode", className=SelectMode))
+        AIBtn.config(font=("Courier", 16, "bold"))
+        AIBtn.pack(pady=10)
+
         menuFrame.pack(side=TOP, expand=YES)
 
 app = Main()

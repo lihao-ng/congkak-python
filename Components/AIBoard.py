@@ -5,9 +5,11 @@ from random import *
 import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
-from tkinter import messagebox
+from copy import *
 
-class Board:
+INFINITY = 1.0e400
+
+class AIBoard:
 
     def __init__(self, holes, beads, player1, player2, frame, controller):
         self.holes = holes
@@ -20,6 +22,8 @@ class Board:
         self.frame = frame
         self.p1side = "1st"
         self.p2side = "2nd"
+        self.p1ABscore = 0
+        self.p2ABscore = 0
         self.checkStatus = False
         self.haventWin = True
         self.indicator = 0
@@ -27,7 +31,6 @@ class Board:
         self.message = "Player 1's turn!"
         self.controller = controller
         self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
-        self.playerMessage.config(font=("Courier", 16))
 
     def init_holes(self):
         for index in range(0, self.holes):
@@ -42,8 +45,6 @@ class Board:
         self.checkstatus(iteration, cplayer)
 
         if self.checkStatus == False:
-            if cplayer != "CPU":
-                messagebox.showerror("Error", "Please choose a hole with values or from your side!")
             return
         else:
             if cplayer == self.p1name:
@@ -53,7 +54,7 @@ class Board:
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player1obj.assignRemaining(self.boardArray)
-                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
+                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
 
                 self.render_holes(self.indicator, cplayer)
                 self.player1obj.render_player()
@@ -64,8 +65,7 @@ class Board:
                     self.render_message("CPU's Turn!")
                     globalValues.screen.update()
                     time.sleep(1)
-
-                    holeChosen = self.get_cpu_hole()
+                    holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
                     self.checkstatus(holeChosen, self.p2name)
                     cplayer = self.p1name
                     self.check_condition(cplayer)
@@ -81,20 +81,13 @@ class Board:
             self.player2obj.render_player()
             self.checkStatus = False
 
-    def get_cpu_hole(self):
-        while True:
-            holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
-            if holeChosen < len(self.boardArray):
-                if self.boardArray[holeChosen].beads != 0:
-                    return holeChosen
-
     def check_condition(self, cplayer):
         self.player2obj.assignScore(self.extractscore)
         self.checkHaventWin(cplayer)
 
         if self.haventWin == False:
             self.player2obj.assignRemaining(self.boardArray)
-            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
+            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
 
     def render_message(self, message):
         self.message = message
@@ -102,9 +95,9 @@ class Board:
 
     def create_hole(self, hole, hole_counter, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
-            image = Image.open("images/active-hole2.png").resize((100, 100), Image.ANTIALIAS)
+            image = Image.open("images/active-hole2.png").resize((135, 135), Image.ANTIALIAS)
         else:
-            image = Image.open("images/hole2.png").resize((100, 100), Image.ANTIALIAS)
+            image = Image.open("images/hole2.png").resize((135, 135), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
         label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#b2854b", fg="white")
@@ -248,3 +241,140 @@ class Board:
                 self.boardArray[i].indicator = True
             else:
                 self.boardArray[i].indicator = False
+
+    #AI stuff begins here
+
+    def ABevalBeads(self, board, index, playerNum):
+        ABnextIndex = index + 1
+
+        if ABnextIndex < len(board):
+            if board[ABnextIndex].beads != 0:
+                self.ABcalBeads(board, ABnextIndex, playerNum)
+            else:
+                self.indicator = index
+                self.ABextractScore(board, ABnextIndex, playerNum)
+        else:
+            ABnextIndex -= len(board)
+
+            if board[ABnextIndex].beads != 0:
+                self.ABcalBeads(board, ABnextIndex, playerNum)
+            else:
+                self.indicator = index
+                self.ABextractScore(board, ABnextIndex, playerNum)
+
+    def ABcalBeads(self, board, index, playerNum):
+        ABmove = board[index].beads
+        board[index].beads = 0
+        ABnewIndex = index
+
+        for i in range(ABmove):
+            ABnewIndex += 1
+            if ABnewIndex < len(board):
+                if ABmove > 0:
+                    board[ABnewIndex].beads += 1
+                    ABmove -= 1
+            else:
+                if ABmove > 0:
+                    ABnewIndex = 0
+                    board[ABnewIndex].beads += 1
+                    ABmove -= 1
+        self.ABevalBeads(board, ABnewIndex, playerNum)
+
+    def ABextractScore(self, board, index, playerNum):
+        ABnewIndex = index + 1
+        if ABnewIndex < len(board):
+            if playerNum > 0:
+                self.p1ABscore += board[ABnewIndex].beads
+                board[ABnewIndex].beads = 0
+            elif playerNum < 0:
+                self.p2ABscore += board[ABnewIndex].beads
+                board[ABnewIndex].beads = 0
+        else:
+            ABnewIndex -= len(board)
+            if playerNum > 0:
+                self.p1ABscore += board[ABnewIndex].beads
+                board[ABnewIndex].beads = 0
+            elif playerNum < 0:
+                self.p2ABscore += board[ABnewIndex].beads
+                board[ABnewIndex].beads = 0
+
+    def ABgetScore(self, board, playerNum):
+        if playerNum > 0:
+            return board.p1ABscore
+        elif playerNum < 0:
+            return board.p2ABscore
+
+    def checkAvailableMoves_ExtractIndex(self, board, playerNum):
+        if playerNum > 0:
+            self.branchingFactor = []
+            for i in range(0, int(len(board) / 2)):
+                if board[i].beads != 0:
+                    self.branchingFactor.append(i)
+        elif playerNum < 0:
+            self.branchingFactor = []
+            for i in range(int(len(board) / 2), len(board)):
+                if board[i].beads != 0:
+                    self.branchingFactor.append(i)
+        return self.branchingFactor
+
+    def AlphaBetaTrigger(self, board):
+        self.alpha = -INFINITY
+        self.beta = INFINITY
+        self.boardCopy = deepcopy(board)
+        self.playerNum = 1
+        self.branches = self.checkAvailableMoves_ExtractIndex(self.boardCopy, self.playerNum)
+        self.bestScore = -INFINITY
+
+        for i in self.branches:
+            self.score = max(self.alpha, self.MinAB(self.boardCopy, i, self.alpha, self.beta, self.playerNum))
+
+            if self.score > self.bestScore:
+                self.move = i
+                self.bestScore = self.score
+
+            self.alpha = max(self.alpha, self.score)
+            self.p1ABscore = 0
+            self.p2ABscore = 0
+        return self.move, self.bestScore
+
+    def MinAB(self, board, index, alpha, beta, playerNum):
+        self.ABcalBeads(board, index, playerNum)
+        playerNum *= -1
+        boardCopy = deepcopy(board)
+        branches = self.checkAvailableMoves_ExtractIndex(boardCopy, playerNum)
+
+        for i in branches:
+            score = min(beta, self.MaxAB(boardCopy, i, alpha, beta, playerNum))
+
+            if score >= alpha:
+                return score
+
+            beta = min(beta, score)
+
+        if board.haventWin == False:
+            playerNum *= -1
+            score = board.ABgetScore(board, playerNum)
+
+        return score
+
+    def MaxAB(self, board, index, alpha, beta, playerNum):
+        self.ABcalBeads(board, index, playerNum)
+        playerNum *= -1
+        boardCopy = deepcopy(board)
+        branches = self.checkAvailableMoves_ExtractIndex(boardCopy, playerNum)
+
+        for i in branches:
+            score = max(alpha, self.MinAB(boardCopy, i, alpha, beta, playerNum))
+
+            if score < beta:
+                return score
+
+            alpha = max(alpha, score)
+
+        if board.haventWin == False:
+            playerNum *= -1
+            score = board.ABgetScore(board, playerNum)
+
+        return score
+
+

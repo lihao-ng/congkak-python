@@ -10,11 +10,11 @@ class Player:
         self.frame = frame
 
         if(self.name == "Player_1"):
-            image = Image.open("images/player1-left.png").resize((220, 271), Image.ANTIALIAS)
+            image = Image.open("images/player1.png").resize((220, 271), Image.ANTIALIAS)
         elif(self.name == "Player_2"):
-            image = Image.open("images/player2-right.png").resize((220, 271), Image.ANTIALIAS)
+            image = Image.open("images/player2.png").resize((220, 271), Image.ANTIALIAS)
         else:
-            image = Image.open("images/cpu-right.png").resize((240, 271), Image.ANTIALIAS)
+            image = Image.open("images/cpu.png").resize((220, 271), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
 
