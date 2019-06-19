@@ -9,10 +9,13 @@ class Player:
         self.currentScore = 0
         self.frame = frame
 
-        image = Image.open("images/hole.png").resize((150, 150), Image.ANTIALIAS)
+        if(self.name == "Player_1"):
+            image = Image.open("images/edge-left.png").resize((200, 341), Image.ANTIALIAS)
+        else:
+            image = Image.open("images/edge-right.png").resize((200, 341), Image.ANTIALIAS)
         loadImage = ImageTk.PhotoImage(image)
 
-        self.renderScore = Label(self.frame, image=loadImage, text=self.currentScore, compound=CENTER, font=3, fg="white", bg="white")
+        self.renderScore = Label(self.frame, image=loadImage, text=self.currentScore, compound=CENTER, font=3, bd=-2, fg="white", bg="#ffffe0", pady=0, padx=0)
         self.renderScore.config(font=("Courier", 44))
         self.renderScore.photo = loadImage
         self.renderScore.pack(side=TOP, expand=YES, fill=BOTH)

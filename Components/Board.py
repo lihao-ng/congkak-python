@@ -90,9 +90,9 @@ class Board:
 
     def create_hole(self, hole, hole_counter, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
-            image = Image.open("images/active-hole.png").resize((135, 135), Image.ANTIALIAS)
+            image = Image.open("images/active-hole2.png").resize((135, 135), Image.ANTIALIAS)
         else:
-            image = Image.open("images/hole.png").resize((135, 135), Image.ANTIALIAS)
+            image = Image.open("images/hole2.png").resize((135, 135), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
         label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#b2854b", fg="white")
