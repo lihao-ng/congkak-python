@@ -27,6 +27,7 @@ class Board:
         self.message = "Player 1's turn!"
         self.controller = controller
         self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
+        self.playerMessage.config(font=("Courier", 16))
 
     def init_holes(self):
         for index in range(0, self.holes):

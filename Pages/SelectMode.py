@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 
+from PIL import Image, ImageTk
 from Pages.Game import Game
 
 class SelectMode(Frame):
@@ -20,6 +21,9 @@ class SelectMode(Frame):
         self.holesDefault = IntVar()
         self.beadsDefault = IntVar()
 
+        image = Image.open("images/plank.png").resize((275, 50), Image.ANTIALIAS)
+        loadImage = ImageTk.PhotoImage(image)
+
         outerFrame = Frame(self, bg=self.background)
         selectModeFrame = Frame(outerFrame, bg=self.background)
 
@@ -27,28 +31,33 @@ class SelectMode(Frame):
         label1.config(font=("Courier", 18, "bold"))
         label1.grid(row=0,padx=20,pady=20)
 
-        normalModeBtn= Button(selectModeFrame, width=25, height=2, text='NORMAL', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('normal'))
+        normalModeBtn= Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='NORMAL', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectMode('normal'))
         normalModeBtn.config(font=("Courier", 14, "bold"))
+        normalModeBtn.image = loadImage
         normalModeBtn.grid(row=1, column=0, pady=20)
 
-        intermediateModeBtn = Button(selectModeFrame, width=25, height=2, text='INTERMEDIATE', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('intermediate'))
+        intermediateModeBtn = Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='INTERMEDIATE', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectMode('intermediate'))
         intermediateModeBtn.config(font=("Courier", 14, "bold"))
+        intermediateModeBtn.image = loadImage
         intermediateModeBtn.grid(row=1, column=1, padx=20)
 
-        advancedModeBtn = Button(selectModeFrame, width=25, height=2, text='ADVANCED', bd=5, bg=self.btnDefaultColor, command=lambda: selectMode('hard'))
+        advancedModeBtn = Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='ADVANCED', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectMode('hard'))
         advancedModeBtn.config(font=("Courier", 14, "bold"))
+        advancedModeBtn.image = loadImage
         advancedModeBtn.grid(row=1, column=2,padx=20)
 
         label1 = Label(selectModeFrame, text="Select Opponent:", font=controller.title_font, bg=self.background, fg=self.color)
         label1.config(font=("Courier", 18, "bold"))
         label1.grid(row=2,padx=20,pady=20)
 
-        player2Btn= Button(selectModeFrame, width=25, height=2, text='PLAYER 2', bd=5, bg=self.btnDefaultColor, command=lambda: selectOpponent('Player_2'))
+        player2Btn= Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='PLAYER 2', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectOpponent('Player_2'))
         player2Btn.config(font=("Courier", 14, "bold"))
+        player2Btn.image = loadImage
         player2Btn.grid(row=3, column=0, padx=20)
 
-        CPUbtn = Button(selectModeFrame, width=25, height=2, text='CPU', bd=5, bg=self.btnDefaultColor, command=lambda: selectOpponent('CPU'))
+        CPUbtn = Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='CPU', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectOpponent('CPU'))
         CPUbtn.config(font=("Courier", 14, "bold"))
+        CPUbtn.image = loadImage
         CPUbtn.grid(row=3, column=1, padx=20)
 
         labelBeads = Label(selectModeFrame, text="Number Of Beads:", font=controller.title_font, bg=self.background, fg=self.color)
@@ -94,9 +103,9 @@ class SelectMode(Frame):
                 self.beadsDefault.set(4)
                 self.holesDefault.set(14)
                 self.gameMode = "normal"
-                normalModeBtn.configure(bg=self.btnSelectedColor, text="NORMAL SELECTED!")
-                intermediateModeBtn.configure(bg=self.btnDefaultColor, text="INTERMEDIATE")
-                advancedModeBtn.configure(bg=self.btnDefaultColor, text="ADVANCED")
+                normalModeBtn.configure(text="NORMAL SELECTED!")
+                intermediateModeBtn.configure( text="INTERMEDIATE")
+                advancedModeBtn.configure(text="ADVANCED")
                 labelBeads.grid_forget()
                 self.numOfBeads.grid_forget()
                 labelHoles.grid_forget()
@@ -104,9 +113,9 @@ class SelectMode(Frame):
 
             elif mode == "intermediate":
                 self.gameMode = "intermediate"
-                intermediateModeBtn.configure(bg=self.btnSelectedColor, text="INTERMEDIATE SELECTED!")
-                normalModeBtn.configure(bg=self.btnDefaultColor, text="NORMAL")
-                advancedModeBtn.configure(bg=self.btnDefaultColor, text="ADVANCED")
+                intermediateModeBtn.configure(text="INTERMEDIATE SELECTED!")
+                normalModeBtn.configure( text="NORMAL")
+                advancedModeBtn.configure(text="ADVANCED")
                 labelBeads.grid(row=4, column=0, pady=20)
                 self.numOfBeads.grid(row=5, column=0)
                 labelHoles.grid(row=4, column=1, pady=20)
@@ -114,9 +123,9 @@ class SelectMode(Frame):
 
             elif mode == "hard":
                 self.gameMode = "hard"
-                advancedModeBtn.configure(bg=self.btnSelectedColor, text="ADVANCED SELECTED!")
-                normalModeBtn.configure(bg=self.btnDefaultColor, text="NORMAL")
-                intermediateModeBtn.configure(bg=self.btnDefaultColor, text="INTERMEDIATE")
+                advancedModeBtn.configure(text="ADVANCED SELECTED!")
+                normalModeBtn.configure(text="NORMAL")
+                intermediateModeBtn.configure(text="INTERMEDIATE")
                 labelBeads.grid(row=4, column=0, pady=20)
                 self.numOfBeads.grid(row=5, column=0)
                 labelHoles.grid(row=4, column=1, pady=20)
@@ -126,10 +135,10 @@ class SelectMode(Frame):
         def selectOpponent(opponent):
             if opponent == "Player_2":
                 self.opponentType = "Player_2"
-                player2Btn.configure(bg=self.btnSelectedColor, text="PLAYER 2 SELECTED!")
-                CPUbtn.configure(bg=self.btnDefaultColor, text="CPU")
+                player2Btn.configure(text="PLAYER 2 SELECTED!")
+                CPUbtn.configure(text="CPU")
 
             elif opponent == "CPU":
                 self.opponentType = "CPU"
-                CPUbtn.configure(bg=self.btnSelectedColor, text="CPU SELECTED!")
-                player2Btn.configure(bg=self.btnDefaultColor, text="PLAYER 2")
+                CPUbtn.configure(text="CPU SELECTED!")
+                player2Btn.configure(text="PLAYER 2")
