@@ -40,6 +40,7 @@ class AIBoard:
         self.AIBtn = Label(self.frame, text='HINT', width="80", height="30", image=self.loadPlankImage, compound=CENTER, bg="#4f3d21", fg="white")
         self.AIMessage = Label(self.frame, text="Press on HINT!", bg="#4f3d21", fg="white")
         self.assignArray = []
+        self.move = -1
 
 
     def init_holes(self):
@@ -68,9 +69,9 @@ class AIBoard:
                 self.checkHaventWin(cplayer)
                 if self.haventWin == False:
                     self.player1obj.assignRemaining(self.boardArray)
-                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+                    self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
 
-                self.render_holes(self.indicator, cplayer)
+                self.render_holes(cplayer)
                 self.player1obj.render_player()
                 self.player2obj.render_player()
                 self.checkStatus = False
@@ -91,7 +92,7 @@ class AIBoard:
                 self.render_message("Player 1's Turn!")
                 self.check_condition(cplayer)
 
-            self.render_holes(self.indicator, cplayer)
+            self.render_holes(cplayer)
             self.player1obj.render_player()
             self.player2obj.render_player()
             self.checkStatus = False
@@ -109,7 +110,7 @@ class AIBoard:
 
         if self.haventWin == False:
             self.player2obj.assignRemaining(self.boardArray)
-            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, haveCpu=self.p2name)
+            self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
 
     def render_message(self, message):
         self.message = message
@@ -120,6 +121,9 @@ class AIBoard:
             image = Image.open("images/active-hole2.png").resize((100, 100), Image.ANTIALIAS)
         else:
             image = Image.open("images/hole2.png").resize((100, 100), Image.ANTIALIAS)
+        if hole.iteration == self.move:
+            image = Image.open("images/hole-purple.png").resize((100, 100), Image.ANTIALIAS)
+            print("i'm in create_hole")
 
         loadImage = ImageTk.PhotoImage(image)
         label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#b2854b", fg="white")
@@ -129,7 +133,7 @@ class AIBoard:
         label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration, cplayer))
         return label
 
-    def render_holes(self, currentIndex, currentPlayer):
+    def render_holes(self, currentPlayer):
         hole_counter = 0
 
         for hole in self.boardArray[::-1]:
@@ -393,11 +397,13 @@ class AIBoard:
             alpha = max(alpha, score)
             print(str(score)+" is the value of score at trigger & beta & alpha"+str(beta)+" & "+str(alpha))
             if score > bestScore:
-                move = i
+                self.move = i
                 bestScore = score
-        self.ABcalBeads(boardCopy, move, playerNum)
+        self.ABcalBeads(boardCopy, self.move, playerNum)
         p1ABscore = self.ABassignScore()
-        print("Index of move is "+str(move)+" and the best possible score is adding "+str(bestScore)+" to your current score, along with the next move score of "+str(p1ABscore))
+        self.hintMsg = str("Index of move is "+str(self.move)+" and the best possible score is adding "+str(bestScore)+" to your current score, along with the next move score of "+str(p1ABscore))
+        print(self.hintMsg)
+        self.render_holes(self.p1name)
         #return self.move, self.bestScore
 
     def MinAB(self, board, index, playerNum, alpha, beta, p1ABscore, p2ABscore, ABhaventWin):
