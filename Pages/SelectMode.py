@@ -29,7 +29,7 @@ class SelectMode(Frame):
 
         label1 = Label(selectModeFrame, text="Select Mode:", font=controller.title_font, bg=self.background, fg=self.color)
         label1.config(font=("Courier", 18, "bold"))
-        label1.grid(row=0,padx=20,pady=20)
+        label1.grid(row=0, column=0, padx=20, pady=20)
 
         normalModeBtn= Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='NORMAL', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectMode('normal'))
         normalModeBtn.config(font=("Courier", 14, "bold"))
@@ -50,7 +50,7 @@ class SelectMode(Frame):
         label1.config(font=("Courier", 18, "bold"))
         label1.grid(row=2,padx=20,pady=20)
 
-        player2Btn= Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='PLAYER 2', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectOpponent('Player_2'))
+        player2Btn = Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='PLAYER 2', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: selectOpponent('Player_2'))
         player2Btn.config(font=("Courier", 14, "bold"))
         player2Btn.image = loadImage
         player2Btn.grid(row=3, column=0, padx=20)
@@ -78,8 +78,9 @@ class SelectMode(Frame):
         self.holesDefault.set(14)
         self.numOfHoles.grid(row=5, column=1)
 
-        submitBtn = Button(selectModeFrame, width=25, height=2, text='START GAME', bd=5, bg=self.btnDefaultColor, command=lambda: checkUserInput())
-        submitBtn.config(font=("Courier", 16, "bold"))
+        submitBtn = Button(selectModeFrame, width=275, height=50, bd=-5, fg="white", bg=self.btnSelectedColor, text='START GAME', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: checkUserInput())
+        submitBtn.config(font=("Courier", 20, "bold"))
+        submitBtn.photo = loadImage
         submitBtn.grid(row=8, column=1, pady=40)
 
         selectModeFrame.pack(side=TOP, expand=YES)
@@ -92,6 +93,10 @@ class SelectMode(Frame):
                 messagebox.showerror("Error", "Please select Opponent")
             elif int(self.numOfHoles.get()) % 2 != 0 or int(self.numOfHoles.get()) == 0:
                 messagebox.showerror("Error", "Number of Holes have to be Even Number ")
+            elif int(self.numOfHoles.get()) <= 2:
+                messagebox.showerror("Error", "Number of Holes cannot be lesser than 2")
+            elif int(self.numOfHoles.get()) > 20:
+                messagebox.showerror("Error", "Number of Holes cannot be more than 20")
             elif int(self.numOfBeads.get()) == 0:
                 messagebox.showerror("Error", "Number of Beads cannot be 0")
             else:
