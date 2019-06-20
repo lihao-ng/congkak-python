@@ -40,7 +40,7 @@ class AIBoard:
         self.AIBtn = Label(self.frame, text='HINT', width="80", height="30", image=self.loadPlankImage, compound=CENTER, bg="#4f3d21", fg="white")
         self.AIMessage = Label(self.frame, text="Press on HINT!", bg="#4f3d21", fg="white")
         self.assignArray = []
-        self.move = -1
+        self.ABBSmove = -1
 
 
     def init_holes(self):
@@ -86,6 +86,8 @@ class AIBoard:
                     cplayer = self.p1name
                     self.check_condition(cplayer)
                     self.render_message("Player 1's Turn!")
+                    self.hintMsg = "Press on HINT for help!"
+                    self.parent.render_ai_message(self.hintMsg)
 
             elif cplayer == self.p2name:
                 cplayer = self.p1name
@@ -121,8 +123,9 @@ class AIBoard:
             image = Image.open("images/active-hole2.png").resize((100, 100), Image.ANTIALIAS)
         else:
             image = Image.open("images/hole2.png").resize((100, 100), Image.ANTIALIAS)
-        if hole.iteration == self.move:
+        if hole.iteration == self.ABBSmove:
             image = Image.open("images/hole-purple.png").resize((100, 100), Image.ANTIALIAS)
+            self.ABBSmove = -1
             print("i'm in create_hole")
 
         loadImage = ImageTk.PhotoImage(image)
@@ -397,12 +400,13 @@ class AIBoard:
             alpha = max(alpha, score)
             print(str(score)+" is the value of score at trigger & beta & alpha"+str(beta)+" & "+str(alpha))
             if score > bestScore:
-                self.move = i
+                self.ABBSmove = i
                 bestScore = score
-        self.ABcalBeads(boardCopy, self.move, playerNum)
+        self.ABcalBeads(boardCopy, self.ABBSmove, playerNum)
         p1ABscore = self.ABassignScore()
-        self.hintMsg = str("Index of move is "+str(self.move)+" and the best possible score is adding "+str(bestScore)+" to your current score, along with the next move score of "+str(p1ABscore))
-        print(self.hintMsg)
+        self.hintMsg = str("Choose hole number "+str(self.ABBSmove+1)+" to obtain the score of "+str(p1ABscore)+", reaching the best possible end game score ( "+str(bestScore)+" + your current score )")
+        self.parent.render_ai_message(self.hintMsg)
+        #print(self.hintMsg)
         self.render_holes(self.p1name)
         #return self.move, self.bestScore
 

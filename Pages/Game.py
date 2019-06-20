@@ -10,7 +10,8 @@ class Game(Frame):
         Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg="#ffffe0")
-        self.aiMessage = "Press on HINT for help!as kjdnalsjkndakj sskjdfkjbhafskbh kdhb fkbash fdbshfsk bfsdf"
+        self.aiMessage = "Press on HINT for help!"
+        self.aiLabel = None
 
         self.setValues(**kwargs)
 
@@ -34,10 +35,10 @@ class Game(Frame):
             loadImage = ImageTk.PhotoImage(image)
 
             ai_message_frame = Frame(self, bg="#ffffe0")
-            self.aiMessage = Label(ai_message_frame, text=self.aiMessage, image=loadImage, compound=CENTER, bg="#ffffe0", bd=-2, fg="white", wraplength=600)
-            self.aiMessage.config(font=("Courier", 12, "bold"))
-            self.aiMessage.photo = loadImage
-            self.aiMessage.pack()
+            self.aiLabel = Label(ai_message_frame, text=self.aiMessage, image=loadImage, compound=CENTER, bg="#ffffe0", bd=-2, fg="white", wraplength=600)
+            self.aiLabel.config(font=("Courier", 12, "bold"))
+            self.aiLabel.photo = loadImage
+            self.aiLabel.pack()
             ai_message_frame.place(relx=0.3, rely=0.7, width=600)
         else:
             board = Board(self.holes, self.beads, player1, player2, board_frame, controller)
@@ -46,6 +47,10 @@ class Game(Frame):
         player2.render_player()
         board.init_holes()
         board.render_holes(player1.name)
+
+    def render_ai_message(self, message):
+        self.aiMessage = message
+        self.aiLabel.configure(text=self.aiMessage)
 
     def setValues(self, **kwargs):
         holes = kwargs.get("holes")
