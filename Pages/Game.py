@@ -33,7 +33,7 @@ class Game(Frame):
         player1.render_player()
         player2.render_player()
         board.init_holes()
-        board.render_holes(0, player1.name)
+        board.render_holes(player1.name)
 
     def setValues(self, **kwargs):
         holes = kwargs.get("holes")
