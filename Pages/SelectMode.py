@@ -86,7 +86,7 @@ class SelectMode(Frame):
             elif int(self.numOfBeads.get()) == 0:
                 messagebox.showerror("Error", "Number of Beads cannot be 0")
             else:
-                self.controller.show_frame("Game", className=Game, holes=self.numOfHoles.get(), beads=self.numOfBeads.get(), haveCPU=self.opponentType)
+                self.controller.show_frame("Game", className=Game, holes=self.numOfHoles.get(), beads=self.numOfBeads.get(), haveCPU=self.opponentType, gameMode=self.gameMode)
 
 
         def selectMode(mode):

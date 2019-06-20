@@ -5,8 +5,11 @@ from random import *
 import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
-from copy import *
+import copy
 
+from sys import *
+
+sys.setrecursionlimit(8000)
 INFINITY = 1.0e400
 
 class AIBoard:
@@ -26,11 +29,13 @@ class AIBoard:
         self.p2ABscore = 0
         self.checkStatus = False
         self.haventWin = True
+        self.ABhaventWin = True
         self.indicator = 0
         self.extractscore = 0
         self.message = "Player 1's turn!"
         self.controller = controller
         self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
+        self.AIBtn = Label(self.frame, text='TEST AI', bg="#b2854b")
 
     def init_holes(self):
         for index in range(0, self.holes):
@@ -40,6 +45,8 @@ class AIBoard:
             self.boardArray.append(Hole(self.beads, index, indicator))
 
         self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
+        self.AIBtn.grid(row=5, column=0, pady=15)
+        self.AIBtn.bind("<Button-1>", lambda event, a=self.boardArray: self.AlphaBetaTrigger(a))
 
     def left_click(self, iteration, cplayer):
         self.checkstatus(iteration, cplayer)
@@ -251,16 +258,26 @@ class AIBoard:
             if board[ABnextIndex].beads != 0:
                 self.ABcalBeads(board, ABnextIndex, playerNum)
             else:
-                self.indicator = index
                 self.ABextractScore(board, ABnextIndex, playerNum)
+                if playerNum > 0:
+                    self.ABcheck1stRow(board)
+                elif playerNum < 0:
+                    self.ABcheck2ndRow(board)
+                if self.ABhaventWin == False:
+                    self.ABassignRemaining(board, playerNum)
         else:
             ABnextIndex -= len(board)
 
             if board[ABnextIndex].beads != 0:
                 self.ABcalBeads(board, ABnextIndex, playerNum)
             else:
-                self.indicator = index
                 self.ABextractScore(board, ABnextIndex, playerNum)
+                if playerNum > 0:
+                    self.ABcheck1stRow(board)
+                elif playerNum < 0:
+                    self.ABcheck2ndRow(board)
+                if self.ABhaventWin == False:
+                    self.ABassignRemaining(board, playerNum)
 
     def ABcalBeads(self, board, index, playerNum):
         ABmove = board[index].beads
@@ -279,6 +296,16 @@ class AIBoard:
                     board[ABnewIndex].beads += 1
                     ABmove -= 1
         self.ABevalBeads(board, ABnewIndex, playerNum)
+
+    def ABassignRemaining(self, board, playerNum):
+        if playerNum > 0:
+            for i in board:
+                self.p2ABscore += i.beads
+                i.beads = 0
+        elif playerNum < 0:
+            for i in board:
+                self.p1ABscore += i.beads
+                i.beads = 0
 
     def ABextractScore(self, board, index, playerNum):
         ABnewIndex = index + 1
@@ -300,9 +327,25 @@ class AIBoard:
 
     def ABgetScore(self, board, playerNum):
         if playerNum > 0:
-            return board.p1ABscore
+            return self.p1ABscore
         elif playerNum < 0:
-            return board.p2ABscore
+            return self.p2ABscore
+
+    def ABcheck1stRow(self, board):
+        for i in range(0, int(len(board) / 2)):
+            if board[i].beads != 0:
+                self.ABhaventWin = True
+                return
+            else:
+                self.ABhaventWin = False
+
+    def ABcheck2ndRow(self, board):
+        for i in range(int(len(board) / 2), len(board)):
+            if board[i].beads != 0:
+                self.ABhaventWin = True
+                return
+            else:
+                self.ABhaventWin = False
 
     def checkAvailableMoves_ExtractIndex(self, board, playerNum):
         if playerNum > 0:
@@ -320,14 +363,17 @@ class AIBoard:
     def AlphaBetaTrigger(self, board):
         self.alpha = -INFINITY
         self.beta = INFINITY
-        self.boardCopy = deepcopy(board)
+        self.boardCopy = copy.deepcopy(board)
         self.playerNum = 1
         self.branches = self.checkAvailableMoves_ExtractIndex(self.boardCopy, self.playerNum)
         self.bestScore = -INFINITY
+        self.ABcounter = 0
+        print("branches at depth trigger "+str(self.ABcounter)+" is "+str(self.branches))
 
         for i in self.branches:
-            self.score = max(self.alpha, self.MinAB(self.boardCopy, i, self.alpha, self.beta, self.playerNum))
-
+            print("branches at depth trigger "+str(self.ABcounter)+" is "+str(self.branches)+" with value of i="+str(i))
+            self.score = max(self.alpha, self.MinAB(self.boardCopy, i, self.playerNum))
+            print(str(self.score)+" is the value of score at trigger & beta & alpha"+str(self.beta)+str(self.alpha))
             if self.score > self.bestScore:
                 self.move = i
                 self.bestScore = self.score
@@ -335,46 +381,65 @@ class AIBoard:
             self.alpha = max(self.alpha, self.score)
             self.p1ABscore = 0
             self.p2ABscore = 0
-        return self.move, self.bestScore
+            self.ABhaventWin = True
+        print("Value of move is "+str(self.move)+" and the value of bestScore is "+str(self.bestScore))
+        #return self.move, self.bestScore
 
-    def MinAB(self, board, index, alpha, beta, playerNum):
+    def MinAB(self, board, index, playerNum):
         self.ABcalBeads(board, index, playerNum)
-        playerNum *= -1
-        boardCopy = deepcopy(board)
+        playerNum = -1
+        boardCopy = copy.deepcopy(board)
         branches = self.checkAvailableMoves_ExtractIndex(boardCopy, playerNum)
+        score = INFINITY
+        print("branches at depth "+str(self.ABcounter)+" in MinAB is "+str(branches))
 
         for i in branches:
-            score = min(beta, self.MaxAB(boardCopy, i, alpha, beta, playerNum))
+            score = min(score, self.MaxAB(boardCopy, i, playerNum))
+            print(str(score)+" is the value of score")
+            print("The value of beta is "+str(self.beta)+"at depth "+str(self.ABcounter))
 
-            if score >= alpha:
+            self.beta = min(self.beta, score)
+            print(str(self.beta)+" is the value of beta")
+            if score > self.alpha:
+                print("pruned at MinAB")
                 return score
+            return score
 
-            beta = min(beta, score)
-
-        if board.haventWin == False:
-            playerNum *= -1
-            score = board.ABgetScore(board, playerNum)
-
+        if len(branches) == 0:
+            if self.ABhaventWin == False:
+                playerNum = 1
+                score = min(score, self.ABgetScore(board, playerNum))
+                self.alpha = max(self.alpha, score)
+                print("game ends here\n")
+        self.ABcounter += 1
         return score
 
-    def MaxAB(self, board, index, alpha, beta, playerNum):
+    def MaxAB(self, board, index, playerNum):
         self.ABcalBeads(board, index, playerNum)
-        playerNum *= -1
-        boardCopy = deepcopy(board)
+        playerNum = 1
+        boardCopy = copy.deepcopy(board)
         branches = self.checkAvailableMoves_ExtractIndex(boardCopy, playerNum)
-
+        score = -INFINITY
+        print("branches at depth "+str(self.ABcounter)+" in MaxAB is "+str(branches))
         for i in branches:
-            score = max(alpha, self.MinAB(boardCopy, i, alpha, beta, playerNum))
+            score = max(score, self.MinAB(boardCopy, i, playerNum))
+            print(str(score)+" is the value of score")
+            print("The value of alpha is "+str(self.alpha)+"at depth "+str(self.ABcounter))
 
-            if score < beta:
+            self.alpha = max(self.alpha, score)
+            print(str(self.alpha)+" is the value of alpha")
+            if score < self.beta:
+                print("pruned at MaxAB")
                 return score
+            return score
 
-            alpha = max(alpha, score)
-
-        if board.haventWin == False:
-            playerNum *= -1
-            score = board.ABgetScore(board, playerNum)
-
+        if len(branches) == 0:
+            if self.ABhaventWin == False:
+                playerNum = -1
+                score = max(score, self.ABgetScore(board, playerNum))
+                self.beta = min(self.beta, score)
+                print("game ends here\n")
+        self.ABcounter += 1
         return score
 
 

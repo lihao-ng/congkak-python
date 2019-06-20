@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import font
 
+from Components.AIBoard import *
+
 from PIL import ImageTk, Image
 
 from Pages.SelectMode import SelectMode
@@ -61,7 +63,7 @@ class MainPage(Frame):
         mainMenuBtn.config(font=("Courier", 16, "bold"))
         mainMenuBtn.pack(pady=10)
 
-        AIBtn = Button(menuFrame, width=25, height=2, text='TEST AI', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode", className=SelectMode))
+        AIBtn = Button(menuFrame, width=25, height=2, text='TEST AI', bd=5, bg="#b2854b", command=lambda: controller.show_frame("AIBoard", className=AIBoard))
         AIBtn.config(font=("Courier", 16, "bold"))
         AIBtn.pack(pady=10)
 
