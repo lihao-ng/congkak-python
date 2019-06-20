@@ -14,7 +14,7 @@ INFINITY = 1.0e400
 
 class AIBoard:
 
-    def __init__(self, holes, beads, player1, player2, frame, controller):
+    def __init__(self, holes, beads, player1, player2, frame, controller, parent):
         self.holes = holes
         self.beads = beads
         self.boardArray = []
@@ -33,11 +33,14 @@ class AIBoard:
         self.extractscore = 0
         self.message = "Player 1's turn!"
         self.controller = controller
+        self.parent = parent
         self.plankImage = Image.open("images/plank.png").resize((80, 30), Image.ANTIALIAS)
         self.loadPlankImage = ImageTk.PhotoImage(self.plankImage)
         self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
         self.AIBtn = Label(self.frame, text='HINT', width="80", height="30", image=self.loadPlankImage, compound=CENTER, bg="#4f3d21", fg="white")
+        self.AIMessage = Label(self.frame, text="Press on HINT!", bg="#4f3d21", fg="white")
         self.assignArray = []
+
 
     def init_holes(self):
         for index in range(0, self.holes):

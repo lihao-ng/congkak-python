@@ -2,6 +2,7 @@ from tkinter import *
 from Components.Board import Board
 from Components.AIBoard import AIBoard
 from Components.Player import Player
+from PIL import Image, ImageTk
 
 class Game(Frame):
 
@@ -9,6 +10,7 @@ class Game(Frame):
         Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg="#ffffe0")
+        self.aiMessage = "Press on HINT for help!as kjdnalsjkndakj sskjdfkjbhafskbh kdhb fkbash fdbshfsk bfsdf"
 
         self.setValues(**kwargs)
 
@@ -26,7 +28,17 @@ class Game(Frame):
         player2 = Player(self.secondPlayer, player2_frame)
 
         if self.gameMode == "hard":
-            board = AIBoard(self.holes, self.beads, player1, player2, board_frame, controller)
+            board = AIBoard(self.holes, self.beads, player1, player2, board_frame, controller, self)
+
+            image = Image.open("images/plank.png").resize((600, 50), Image.ANTIALIAS)
+            loadImage = ImageTk.PhotoImage(image)
+
+            ai_message_frame = Frame(self, bg="#ffffe0")
+            self.aiMessage = Label(ai_message_frame, text=self.aiMessage, image=loadImage, compound=CENTER, bg="#ffffe0", bd=-2, fg="white", wraplength=600)
+            self.aiMessage.config(font=("Courier", 12, "bold"))
+            self.aiMessage.photo = loadImage
+            self.aiMessage.pack()
+            ai_message_frame.place(relx=0.3, rely=0.7, width=600)
         else:
             board = Board(self.holes, self.beads, player1, player2, board_frame, controller)
 
