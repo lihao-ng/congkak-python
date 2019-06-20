@@ -1,5 +1,6 @@
 from tkinter import *
 from Components.Board import Board
+from Components.AIBoard import AIBoard
 from Components.Player import Player
 
 class Game(Frame):
@@ -23,7 +24,11 @@ class Game(Frame):
 
         player1 = Player("Player_1", player1_frame)
         player2 = Player(self.secondPlayer, player2_frame)
-        board = Board(self.holes, self.beads, player1, player2, board_frame, controller)
+
+        if self.gameMode == "hard":
+            board = AIBoard(self.holes, self.beads, player1, player2, board_frame, controller)
+        else:
+            board = Board(self.holes, self.beads, player1, player2, board_frame, controller)
 
         player1.render_player()
         player2.render_player()
@@ -34,6 +39,7 @@ class Game(Frame):
         holes = kwargs.get("holes")
         beads = kwargs.get("beads")
         haveCPU = kwargs.get("haveCPU")
+        gameMode = kwargs.get("gameMode")
 
         if holes:
             self.holes = int(holes)
@@ -52,3 +58,8 @@ class Game(Frame):
                 self.secondPlayer = "Player_2"
         else:
             self.secondPlayer = "CPU"
+
+        if gameMode == "hard":
+            self.gameMode = "hard"
+        else:
+            self.gameMode = "normal"
