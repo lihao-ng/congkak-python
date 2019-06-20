@@ -9,7 +9,7 @@ import copy
 
 from sys import *
 
-sys.setrecursionlimit(8000)
+sys.setrecursionlimit(2000)
 INFINITY = 1.0e400
 
 class AIBoard:
@@ -76,7 +76,8 @@ class AIBoard:
                     self.render_message("CPU's Turn!")
                     globalValues.screen.update()
                     time.sleep(1)
-                    holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
+
+                    holeChosen = self.get_cpu_hole()
                     self.checkstatus(holeChosen, self.p2name)
                     cplayer = self.p1name
                     self.check_condition(cplayer)
@@ -91,6 +92,13 @@ class AIBoard:
             self.player1obj.render_player()
             self.player2obj.render_player()
             self.checkStatus = False
+
+    def get_cpu_hole(self):
+        while True:
+            holeChosen = randint(len(self.boardArray) / 2, len(self.boardArray))
+            if holeChosen < len(self.boardArray):
+                if self.boardArray[holeChosen].beads != 0:
+                    return holeChosen
 
     def check_condition(self, cplayer):
         self.player2obj.assignScore(self.extractscore)
