@@ -17,7 +17,6 @@ class Main(Tk):
         globalValues.screen = self
         self.title("Mangala")
         self.title_font = font.Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        # self.configure(bg="white")
         self.state('zoomed')
 
         self.pages = (MainPage, SelectMode)
@@ -59,13 +58,13 @@ class MainPage(Frame):
         label.image = img
         label.pack(pady=50)
 
-        mainMenuBtn = Button(menuFrame, width=25, height=2, text='START GAME', bd=5, bg="#b2854b", command=lambda: controller.show_frame("SelectMode", className=SelectMode))
-        mainMenuBtn.config(font=("Courier", 16, "bold"))
-        mainMenuBtn.pack(pady=10)
+        image = Image.open("images/plank.png").resize((300, 60), Image.ANTIALIAS)
+        loadImage = ImageTk.PhotoImage(image)
 
-        AIBtn = Button(menuFrame, width=25, height=2, text='TEST AI', bd=5, bg="#b2854b", command=lambda: controller.show_frame("AIBoard", className=AIBoard))
-        AIBtn.config(font=("Courier", 16, "bold"))
-        AIBtn.pack(pady=10)
+        mainMenuBtn = Button(menuFrame, width=300, height=60, bd=-5, fg="white", bg="#b2854b", text='START GAME', image=loadImage, padx=0, pady=0, compound=CENTER, command=lambda: controller.show_frame("SelectMode", className=SelectMode))
+        mainMenuBtn.config(font=("Courier", 20, "bold"))
+        mainMenuBtn.photo = loadImage
+        mainMenuBtn.pack(pady=10)
 
         menuFrame.pack(side=TOP, expand=YES)
 

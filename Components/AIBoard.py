@@ -33,8 +33,10 @@ class AIBoard:
         self.extractscore = 0
         self.message = "Player 1's turn!"
         self.controller = controller
+        self.plankImage = Image.open("images/plank.png").resize((80, 30), Image.ANTIALIAS)
+        self.loadPlankImage = ImageTk.PhotoImage(self.plankImage)
         self.playerMessage = Label(self.frame, text=self.message, compound=CENTER, font=1.5, bg="#4f3d21", fg="white")
-        self.AIBtn = Label(self.frame, text='TEST AI', bg="#b2854b")
+        self.AIBtn = Label(self.frame, text='HINT', width="80", height="30", image=self.loadPlankImage, compound=CENTER, bg="#4f3d21", fg="white")
         self.assignArray = []
 
     def init_holes(self):
@@ -45,7 +47,9 @@ class AIBoard:
             self.boardArray.append(Hole(self.beads, index, indicator))
 
         self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
-        self.AIBtn.grid(row=5, column=0, pady=15)
+        self.AIBtn.photo = self.loadPlankImage
+        self.AIBtn.config(font=("Courier", 12, "bold"))
+        self.AIBtn.grid(row=2, column=0)
         self.AIBtn.bind("<Button-1>", lambda event, a=self.boardArray: self.AlphaBetaTrigger(a))
 
     def left_click(self, iteration, cplayer):
@@ -110,9 +114,9 @@ class AIBoard:
 
     def create_hole(self, hole, hole_counter, row, currentPlayer):
         if hole.indicator == True and hole.beads != 0:
-            image = Image.open("images/active-hole2.png").resize((135, 135), Image.ANTIALIAS)
+            image = Image.open("images/active-hole2.png").resize((100, 100), Image.ANTIALIAS)
         else:
-            image = Image.open("images/hole2.png").resize((135, 135), Image.ANTIALIAS)
+            image = Image.open("images/hole2.png").resize((100, 100), Image.ANTIALIAS)
 
         loadImage = ImageTk.PhotoImage(image)
         label = Label(self.frame, image=loadImage, text=hole.beads, compound=CENTER, font=2.5, bg="#b2854b", fg="white")
