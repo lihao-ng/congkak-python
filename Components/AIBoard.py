@@ -439,7 +439,7 @@ class AIBoard:
             if ABhaventWin == False:
                 #p1ABscore += self.ABassignScore()
                 print("p1ABscore is " + str(p1ABscore)+" after assigning remaining to him")
-                score = p1ABscore
+                score = p1ABscore - p2ABscore
                 print("game ends here\n")
             else:
                 print("length of branches is " + str(len(branches)) + " and the game status is " + str(ABhaventWin))
@@ -475,7 +475,7 @@ class AIBoard:
             if ABhaventWin == False:
                 #p2ABscore += self.ABassignScore()
                 print("p2ABscore is " + str(p2ABscore)+" after assigning remaining to him")
-                score = p2ABscore
+                score = p1ABscore - p2ABscore
                 print("game ends here\n")
             else:
                 print("length of branches is " + str(len(branches)) + " and the game status is " + str(ABhaventWin))
