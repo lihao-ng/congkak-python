@@ -1,8 +1,6 @@
 from tkinter import *
 from tkinter import font
 
-from Components.AIBoard import *
-
 from PIL import ImageTk, Image
 
 from Pages.SelectMode import SelectMode

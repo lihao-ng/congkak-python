@@ -5,6 +5,7 @@ from random import *
 import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
+from tkinter import messagebox
 import copy
 
 from sys import *
@@ -50,7 +51,7 @@ class AIBoard:
                 indicator = True
             self.boardArray.append(Hole(self.beads, index, indicator))
 
-        self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
+        self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15, padx=(20, 10))
         self.AIBtn.photo = self.loadPlankImage
         self.AIBtn.config(font=("Courier", 12, "bold"))
         self.AIBtn.grid(row=2, column=0)
@@ -60,10 +61,13 @@ class AIBoard:
         self.checkstatus(iteration, cplayer)
 
         if self.checkStatus == False:
+            if cplayer != "CPU":
+                messagebox.showerror("Error", "Please choose a hole with values or from your side!")
             return
         else:
             if cplayer == self.p1name:
                 cplayer = self.p2name
+                self.AIBtn.grid_forget()
                 self.render_message("Player 2's Turn!")
                 self.player1obj.assignScore(self.extractscore)
                 self.checkHaventWin(cplayer)
@@ -87,9 +91,11 @@ class AIBoard:
                     self.check_condition(cplayer)
                     self.render_message("Player 1's Turn!")
                     self.hintMsg = "Press on HINT for help!"
+                    self.AIBtn.grid(row=2, column=0)
                     self.parent.render_ai_message(self.hintMsg)
 
             elif cplayer == self.p2name:
+                self.AIBtn.grid(row=2, column=0)
                 cplayer = self.p1name
                 self.render_message("Player 1's Turn!")
                 self.check_condition(cplayer)
@@ -286,7 +292,7 @@ class AIBoard:
                 elif playerNum > 0:
                     self.ABcheck2ndRow(board)
                 if self.ABhaventWin == False:
-                    self.ABassignRemaining(board, playerNum)
+                    self.ABassignRemaining(board)
         else:
             ABnextIndex -= len(board)
 
@@ -299,7 +305,7 @@ class AIBoard:
                 elif playerNum > 0:
                     self.ABcheck2ndRow(board)
                 if self.ABhaventWin == False:
-                    self.ABassignRemaining(board, playerNum)
+                    self.ABassignRemaining(board)
 
     def ABcalBeads(self, board, index, playerNum):
         ABmove = board[index].beads
@@ -319,7 +325,7 @@ class AIBoard:
                     ABmove -= 1
         self.ABevalBeads(board, ABnewIndex, playerNum)
 
-    def ABassignRemaining(self, board, playerNum):
+    def ABassignRemaining(self, board):
         for i in board:
             self.ABroundScore += i.beads
             self.assignArray.append(i.iteration)
@@ -390,97 +396,61 @@ class AIBoard:
         bestScore = -INFINITY
         p1ABscore = 0
         p2ABscore = 0
-        ABhaventWin = True
-        self.ABcounter = 0
-        print("branches at depth trigger "+str(self.ABcounter)+" is "+str(branches))
 
         for i in branches:
-            print("branches at depth trigger "+str(self.ABcounter)+" is "+str(branches)+" with value of i="+str(i))
-            score = self.MinAB(boardCopy, i, playerNum, alpha, beta, p1ABscore, p2ABscore, ABhaventWin)
+            score = self.MinAB(boardCopy, i, playerNum, alpha, beta, p1ABscore, p2ABscore)
             alpha = max(alpha, score)
-            print(str(score)+" is the value of score at trigger & beta & alpha"+str(beta)+" & "+str(alpha))
             if score > bestScore:
                 self.ABBSmove = i
                 bestScore = score
         self.ABcalBeads(boardCopy, self.ABBSmove, playerNum)
         p1ABscore = self.ABassignScore()
-        self.hintMsg = str("Choose hole number "+str(self.ABBSmove+1)+" to obtain the score of "+str(p1ABscore)+", reaching the best possible end game score ( "+str(bestScore)+" + your current score )")
+        self.hintMsg = str("Choose hole number "+str(self.ABBSmove+1)+" to secure "+str(p1ABscore)+" beads, winning your opponent by "+str(bestScore)+" beads if it plays out accordingly")
         self.parent.render_ai_message(self.hintMsg)
-        #print(self.hintMsg)
         self.render_holes(self.p1name)
-        #return self.move, self.bestScore
 
-    def MinAB(self, board, index, playerNum, alpha, beta, p1ABscore, p2ABscore, ABhaventWin):
+    def MinAB(self, board, index, playerNum, alpha, beta, p1ABscore, p2ABscore):
         boardCopy = copy.deepcopy(board)
         self.ABcalBeads(boardCopy, index, playerNum)
         p1ABscore += self.ABassignScore()
-        print("p1ABscore is "+str(p1ABscore))
         ABhaventWin = self.GameStatus()
-        print("Game Status is "+str(ABhaventWin))
         playerNum = -1
         branches = self.checkAvailableMoves_ExtractIndex(boardCopy, playerNum)
         score = INFINITY
-        print("branches at depth "+str(self.ABcounter)+" in MinAB is "+str(branches))
 
         for i in branches:
-            score = min(score, self.MaxAB(boardCopy, i, playerNum, alpha, beta, p1ABscore, p2ABscore, ABhaventWin))
-            print(str(score)+" is the value of score")
-            print("The value of beta is "+str(beta)+"at depth "+str(self.ABcounter))
+            score = min(score, self.MaxAB(boardCopy, i, playerNum, alpha, beta, p1ABscore, p2ABscore))
 
             beta = min(beta, score)
-            print(str(beta)+" is the value of beta")
-            #if score > alpha:
             if alpha >= beta:
-                print("pruned at MinAB")
                 return score
             return score
 
         if len(branches) == 0:
             if ABhaventWin == False:
-                #p1ABscore += self.ABassignScore()
-                print("p1ABscore is " + str(p1ABscore)+" after assigning remaining to him")
-                score = p1ABscore
-                print("game ends here\n")
-            else:
-                print("length of branches is " + str(len(branches)) + " and the game status is " + str(ABhaventWin))
-                print("\n"+str(boardCopy)+"\n")
-        self.ABcounter += 1
+                score = p1ABscore - p2ABscore
         return score
 
-    def MaxAB(self, board, index, playerNum, alpha, beta, p1ABscore, p2ABscore, ABhaventWin):
+    def MaxAB(self, board, index, playerNum, alpha, beta, p1ABscore, p2ABscore):
         boardCopy = copy.deepcopy(board)
         self.ABcalBeads(boardCopy, index, playerNum)
         p2ABscore += self.ABassignScore()
-        print("p2ABscore is "+str(p2ABscore))
         ABhaventWin = self.GameStatus()
-        print("Game Status is "+str(ABhaventWin))
         playerNum = 1
         branches = self.checkAvailableMoves_ExtractIndex(boardCopy, playerNum)
         score = -INFINITY
-        print("branches at depth "+str(self.ABcounter)+" in MaxAB is "+str(branches))
+
         for i in branches:
-            score = max(score, self.MinAB(boardCopy, i, playerNum, alpha, beta, p1ABscore, p2ABscore, ABhaventWin))
-            print(str(score)+" is the value of score")
-            print("The value of alpha is "+str(alpha)+"at depth "+str(self.ABcounter))
+            score = max(score, self.MinAB(boardCopy, i, playerNum, alpha, beta, p1ABscore, p2ABscore))
 
             alpha = max(alpha, score)
-            print(str(alpha)+" is the value of alpha")
-            #if score < beta:
             if alpha >= beta:
-                print("pruned at MaxAB")
                 return score
             return score
 
         if len(branches) == 0:
             if ABhaventWin == False:
-                #p2ABscore += self.ABassignScore()
-                print("p2ABscore is " + str(p2ABscore)+" after assigning remaining to him")
-                score = p2ABscore
-                print("game ends here\n")
-            else:
-                print("length of branches is " + str(len(branches)) + " and the game status is " + str(ABhaventWin))
-                print("\n"+str(boardCopy)+"\n")
-        self.ABcounter += 1
+                score = p1ABscore - p2ABscore
         return score
 
 

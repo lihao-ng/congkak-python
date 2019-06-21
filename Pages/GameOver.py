@@ -13,19 +13,29 @@ class GameOver(Frame):
         self.player2Name = kwargs.get("player2Name")
         self.p2WinnerImage = None
         if self.player2Name == "CPU":
-            self.p2WinnerImage = Image.open("images/CPU-winner.png").resize((200, 120), Image.ANTIALIAS)
+            if self.player1Score <= self.player2Score:
+                self.p2Image = Image.open("images/Winner-CPU.png").resize((200, 120), Image.ANTIALIAS)
+            else:
+                self.p2Image = Image.open("images/Loser-CPU.png").resize((200, 120), Image.ANTIALIAS)
         else:
-            self.p2WinnerImage = Image.open("images/Player2-winner.png").resize((200, 120), Image.ANTIALIAS)
+            if self.player1Score <= self.player2Score:
+                self.p2Image = Image.open("images/Winner-Player2.png").resize((200, 120), Image.ANTIALIAS)
+            else:
+                self.p2Image = Image.open("images/Loser-Player2.png").resize((200, 120), Image.ANTIALIAS)
 
         self.background = "#b2854b"
 
         gameOverImage = Image.open("images/Game-Over.png").resize((700, 180), Image.ANTIALIAS)
         loadGameOverImage = self.loadImage(gameOverImage)
 
-        p1WinnerImage = Image.open("images/Player1-winner.png").resize((200, 120), Image.ANTIALIAS)
-        loadp1WinnerImage = self.loadImage(p1WinnerImage)
+        if self.player1Score >= self.player2Score:
+            p1Image = Image.open("images/Winner-Player1.png").resize((200, 120), Image.ANTIALIAS)
+        else:
+            p1Image = Image.open("images/Loser-Player1.png").resize((200, 120), Image.ANTIALIAS)
 
-        loadp2WinnerImage = self.loadImage(self.p2WinnerImage)
+        loadp1Image = self.loadImage(p1Image)
+
+        loadp2Image = self.loadImage(self.p2Image)
 
         image = Image.open("images/hole.png").resize((200, 200), Image.ANTIALIAS)
         loadImage = ImageTk.PhotoImage(image)
@@ -40,8 +50,8 @@ class GameOver(Frame):
         label.photo = loadGameOverImage
         label.grid(row=0, columnspan=12, pady=0, padx=0)
 
-        label = Label(resultFrame, image=loadp1WinnerImage, bg=self.background)
-        label.photo = loadp1WinnerImage
+        label = Label(resultFrame, image=loadp1Image, bg=self.background)
+        label.photo = loadp1Image
         label.grid(row=1, column=0, pady=(30, 10))
 
         label = Label(resultFrame, image=loadImage, text=self.player1Score, compound=CENTER, font=2.5, bg=self.background, fg="white")
@@ -49,8 +59,8 @@ class GameOver(Frame):
         label.photo = loadImage
         label.grid(row=2, column=0)
 
-        label = Label(resultFrame, image=loadp2WinnerImage, bg=self.background)
-        label.photo = loadp2WinnerImage
+        label = Label(resultFrame, image=loadp2Image, bg=self.background)
+        label.photo = loadp2Image
         label.grid(row=1, column=2, pady=(30, 10))
 
         label = Label(resultFrame, image=loadImage, text=self.player2Score, compound=CENTER, font=2.5, bg=self.background, fg="white")
