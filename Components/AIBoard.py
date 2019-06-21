@@ -292,7 +292,7 @@ class AIBoard:
                 elif playerNum > 0:
                     self.ABcheck2ndRow(board)
                 if self.ABhaventWin == False:
-                    self.ABassignRemaining(board, playerNum)
+                    self.ABassignRemaining(board)
         else:
             ABnextIndex -= len(board)
 
@@ -305,7 +305,7 @@ class AIBoard:
                 elif playerNum > 0:
                     self.ABcheck2ndRow(board)
                 if self.ABhaventWin == False:
-                    self.ABassignRemaining(board, playerNum)
+                    self.ABassignRemaining(board)
 
     def ABcalBeads(self, board, index, playerNum):
         ABmove = board[index].beads
@@ -325,7 +325,7 @@ class AIBoard:
                     ABmove -= 1
         self.ABevalBeads(board, ABnewIndex, playerNum)
 
-    def ABassignRemaining(self, board, playerNum):
+    def ABassignRemaining(self, board):
         for i in board:
             self.ABroundScore += i.beads
             self.assignArray.append(i.iteration)
@@ -410,7 +410,7 @@ class AIBoard:
                 bestScore = score
         self.ABcalBeads(boardCopy, self.ABBSmove, playerNum)
         p1ABscore = self.ABassignScore()
-        self.hintMsg = str("Choose hole number "+str(self.ABBSmove+1)+" to obtain the score of "+str(p1ABscore)+", reaching the best possible end game score ( "+str(bestScore)+" + your current score )")
+        self.hintMsg = str("Choose hole number "+str(self.ABBSmove+1)+" to secure "+str(p1ABscore)+" beads, winning your opponent by "+str(bestScore)+" beads if it plays out accordingly")
         self.parent.render_ai_message(self.hintMsg)
         #print(self.hintMsg)
         self.render_holes(self.p1name)
