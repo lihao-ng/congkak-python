@@ -5,6 +5,7 @@ from random import *
 import globalValues
 from Components.Hole import Hole
 from Pages.GameOver import GameOver
+from tkinter import messagebox
 import copy
 
 from sys import *
@@ -50,7 +51,7 @@ class AIBoard:
                 indicator = True
             self.boardArray.append(Hole(self.beads, index, indicator))
 
-        self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15)
+        self.playerMessage.grid(row=2, columnspan=int(len(self.boardArray)), pady=15, padx=(20, 10))
         self.AIBtn.photo = self.loadPlankImage
         self.AIBtn.config(font=("Courier", 12, "bold"))
         self.AIBtn.grid(row=2, column=0)
@@ -60,10 +61,13 @@ class AIBoard:
         self.checkstatus(iteration, cplayer)
 
         if self.checkStatus == False:
+            if cplayer != "CPU":
+                messagebox.showerror("Error", "Please choose a hole with values or from your side!")
             return
         else:
             if cplayer == self.p1name:
                 cplayer = self.p2name
+                self.AIBtn.grid_forget()
                 self.render_message("Player 2's Turn!")
                 self.player1obj.assignScore(self.extractscore)
                 self.checkHaventWin(cplayer)
@@ -87,9 +91,11 @@ class AIBoard:
                     self.check_condition(cplayer)
                     self.render_message("Player 1's Turn!")
                     self.hintMsg = "Press on HINT for help!"
+                    self.AIBtn.grid(row=2, column=0)
                     self.parent.render_ai_message(self.hintMsg)
 
             elif cplayer == self.p2name:
+                self.AIBtn.grid(row=2, column=0)
                 cplayer = self.p1name
                 self.render_message("Player 1's Turn!")
                 self.check_condition(cplayer)

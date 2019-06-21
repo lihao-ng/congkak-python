@@ -94,7 +94,7 @@ class SelectMode(Frame):
             elif int(self.numOfHoles.get()) % 2 != 0 or int(self.numOfHoles.get()) == 0:
                 messagebox.showerror("Error", "Number of Holes have to be Even Number ")
             elif int(self.numOfHoles.get()) <= 4:
-                messagebox.showerror("Error", "Number of Holes cannot be lesser than 2")
+                messagebox.showerror("Error", "Number of Holes cannot be lesser than 4")
             elif int(self.numOfHoles.get()) > 20:
                 messagebox.showerror("Error", "Number of Holes cannot be more than 20")
             elif int(self.numOfBeads.get()) == 0:

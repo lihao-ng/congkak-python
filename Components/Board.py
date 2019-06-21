@@ -55,7 +55,7 @@ class Board:
                     self.player1obj.assignRemaining(self.boardArray)
                     self.controller.show_frame("GameOver", className=GameOver, player1Score=self.player1obj.currentScore, player2Score=self.player2obj.currentScore, player2Name=self.p2name)
 
-                self.render_holes(self.indicator, cplayer)
+                self.render_holes(cplayer)
                 self.player1obj.render_player()
                 self.player2obj.render_player()
                 self.checkStatus = False
@@ -76,7 +76,7 @@ class Board:
                 self.render_message("Player 1's Turn!")
                 self.check_condition(cplayer)
 
-            self.render_holes(self.indicator, cplayer)
+            self.render_holes(cplayer)
             self.player1obj.render_player()
             self.player2obj.render_player()
             self.checkStatus = False
@@ -114,7 +114,7 @@ class Board:
         label.bind("<Button-1>", lambda event, iteration=hole.iteration, cplayer=currentPlayer: self.left_click(iteration, cplayer))
         return label
 
-    def render_holes(self, currentIndex, currentPlayer):
+    def render_holes(self, currentPlayer):
         hole_counter = 0
 
         for hole in self.boardArray[::-1]:
